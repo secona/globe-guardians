@@ -1,11 +1,11 @@
 import Phaser from "phaser";
-import { Game } from "../scenes/Game";
+import { Game } from "./Game";
 
 export class DialogScene extends Phaser.Scene {
-  private dialogBox!: Phaser.GameObjects.Image;
-  private characterImage!: Phaser.GameObjects.Image;
+  private dialogBox!: Phaser.GameObjects.Rectangle;
   private nameText!: Phaser.GameObjects.Text;
   private dialogText!: Phaser.GameObjects.Text;
+  private continueText!: Phaser.GameObjects.Text;
   private dialogs: { name: string; text: string; character: string }[];
   private currentDialogIndex: number = 0;
   private currentText: string = "";
@@ -49,14 +49,13 @@ export class DialogScene extends Phaser.Scene {
     ];
   }
 
+  preload() {
+    this.load.image("ojan", "/assets/ojan.png");
+  }
+
   create() {
-    this.dialogBox = this.add.image(400, 300, "dialog");
-    this.characterImage = this.add.image(100, 300, "ojan");
-    this.nameText = this.add.text(150, 250, "", { fontSize: "16px" });
-    this.dialogText = this.add.text(150, 300, "", {
-      fontSize: "16px",
-      wordWrap: { width: 600 },
-    });
+    this.add.image(650, 300, "ojan");
+    this.createDialogBox();
 
     this.enterKey = this.input!.keyboard!.addKey(
       Phaser.Input.Keyboard.KeyCodes.ENTER
@@ -66,14 +65,49 @@ export class DialogScene extends Phaser.Scene {
     this.showNextDialog();
   }
 
-  showNextDialog() {
+  private createDialogBox() {
+    this.dialogBox = this.add.rectangle(400, 500, 780, 180, 0xfff2cc);
+    this.dialogBox.setStrokeStyle(4, 0xd2691e);
+
+    this.nameText = this.add.text(20, 420, "", {
+      fontSize: "24px",
+      color: "#000",
+    });
+    this.dialogText = this.add.text(20, 460, "", {
+      fontSize: "20px",
+      color: "#000",
+      wordWrap: { width: 760 },
+    });
+    this.continueText = this.add.text(720, 640, "[Continue]", {
+      fontSize: "18px",
+      color: "#666",
+    });
+
+    this.hideDialog();
+  }
+
+  private hideDialog() {
+    this.dialogBox.setVisible(false);
+    this.nameText.setVisible(false);
+    this.dialogText.setVisible(false);
+    this.continueText.setVisible(false);
+  }
+
+  private showDialog() {
+    this.dialogBox.setVisible(true);
+    this.nameText.setVisible(true);
+    this.dialogText.setVisible(true);
+    this.continueText.setVisible(true);
+  }
+
+  private showNextDialog() {
     if (this.currentDialogIndex < this.dialogs.length) {
       const dialog = this.dialogs[this.currentDialogIndex];
       this.nameText.setText(dialog.name);
-      this.characterImage.setTexture(dialog.character);
       this.currentText = dialog.text;
       this.textIndex = 0;
       this.dialogText.setText("");
+      this.showDialog();
       this.time.addEvent({
         delay: 100,
         callback: this.typeText,
@@ -86,7 +120,7 @@ export class DialogScene extends Phaser.Scene {
     }
   }
 
-  typeText() {
+  private typeText() {
     if (this.textIndex < this.currentText.length) {
       this.dialogText.setText(
         this.dialogText.text + this.currentText[this.textIndex]
@@ -95,7 +129,7 @@ export class DialogScene extends Phaser.Scene {
     }
   }
 
-  startMainMenu() {
+  private startMainMenu() {
     this.scene.start("Game");
   }
 }
