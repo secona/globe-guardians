@@ -1,6 +1,7 @@
 import { Game as MainGame } from "./scenes/Game";
 import { AUTO, Game, Scale, Types } from "phaser";
 import { HUD } from "./scenes/HUD";
+import { MainMenu } from "./scenes/MainMenu";
 
 const config: Types.Core.GameConfig = {
   type: AUTO,
@@ -18,7 +19,7 @@ const config: Types.Core.GameConfig = {
     mode: Scale.FIT,
     autoCenter: Scale.CENTER_BOTH,
   },
-  scene: [MainGame, HUD],
+  scene: [MainMenu, MainGame, HUD],
 };
 
 export default new Game(config);
