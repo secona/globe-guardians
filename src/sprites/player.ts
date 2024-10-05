@@ -9,8 +9,8 @@ interface PlayerConfig {
 }
 
 export class Player extends Phaser.Physics.Arcade.Sprite {
-  private config: PlayerConfig;
   declare body: Phaser.Physics.Arcade.Body;
+  private config: PlayerConfig;
   private moveSpeed: number = 200;
 
   constructor(config: PlayerConfig) {
@@ -23,30 +23,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     const { scene } = this.config;
     console.log("Initializing Player in Scene", scene);
 
-    if (!scene) {
-      console.error("Scene is undefined");
-      return;
-    }
-
-    if (!scene.add || typeof scene.add.existing !== "function") {
-      console.error("Scene add system not available or not a function");
-      return;
-    }
-
-    if (!scene.physics || typeof scene.physics.add.existing !== "function") {
-      console.error("Scene physics system not available or not a function");
-      return;
-    }
-
     scene.add.existing(this);
     scene.physics.add.existing(this);
 
-    if (this.body) {
-      this.body.setCollideWorldBounds(true);
-      this.body.allowGravity = false;
-    } else {
-      console.error("Player body not initialized");
-    }
+    this.body.setCollideWorldBounds(true);
+    this.body.allowGravity = false;
 
     this.setAnimations();
   }
