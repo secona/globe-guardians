@@ -9,7 +9,9 @@ export class Game extends Scene {
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private plantKey!: Phaser.Input.Keyboard.Key;
   private sawitKey!: Phaser.Input.Keyboard.Key;
+  private fireKey!: Phaser.Input.Keyboard.Key;
   private colliders!: Physics.Arcade.StaticGroup;
+  private peat: Phaser.GameObjects.Image[] = [];
   private plantableArea!: Phaser.Geom.Rectangle;
   private plantedCrops: Phaser.GameObjects.Image[] = [];
   private plantedSawit: Phaser.GameObjects.Image[] = [];
@@ -98,7 +100,10 @@ export class Game extends Scene {
         if (Math.random() < 0.6) {
           const offsetX = Math.random() * 10 - 5;
           const offsetY = Math.random() * 10 - 5;
-          this.add.image(x + offsetX, y + offsetY, "peat").setOrigin(0, 0);
+          const peat = this.add
+            .image(x + offsetX, y + offsetY, "peat")
+            .setOrigin(0, 0);
+          this.peat.push(peat);
         }
       }
     }
@@ -118,8 +123,10 @@ export class Game extends Scene {
     }) as Phaser.Types.Input.Keyboard.CursorKeys;
 
     this.plantKey = this.input.keyboard?.addKey(Input.Keyboard.KeyCodes.ONE!)!;
-
-    this.sawitKey = this.input.keyboard?.addKey(Input.Keyboard.KeyCodes.TWO!)!;
+    this.sawitKey = this.input.keyboard?.addKey(Input.Keyboard.KeyCodes.FIVE!)!;
+    this.fireKey = this.input.keyboard?.addKey(
+      Phaser.Input.Keyboard.KeyCodes.FOUR!
+    )!;
 
     this.createColliders();
     this.physics.add.collider(this.player, this.colliders);
@@ -171,8 +178,11 @@ export class Game extends Scene {
       if (this.toolState.getSelectedTool() === 3) {
         this.tryCutTree();
       }
-      if (this.toolState.getSelectedTool() === 2) {
+      if (this.toolState.getSelectedTool() === 5) {
         this.handlePlanting();
+      }
+      if (this.toolState.getSelectedTool() === 4) {
+        this.trySetPeatOnFire();
       }
     }
   }
@@ -187,6 +197,48 @@ export class Game extends Scene {
       this.tree = this.tree.filter((tree) => tree !== nearestTree);
     } else {
       console.log("No tree to cut here!");
+    }
+  }
+
+  private getNearestPeat(): Phaser.GameObjects.Image | null {
+    let nearestPeat = null;
+    let minDistance = Infinity;
+
+    this.peat.forEach((peatObj) => {
+      const distance = Phaser.Math.Distance.Between(
+        this.player.x,
+        this.player.y,
+        peatObj.x,
+        peatObj.y
+      );
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestPeat = peatObj;
+      }
+    });
+
+    return nearestPeat;
+  }
+
+  private isPlayerNearPeat(peat: Phaser.GameObjects.Image): boolean {
+    const distance = Phaser.Math.Distance.Between(
+      this.player.x,
+      this.player.y,
+      peat.x,
+      peat.y
+    );
+    return distance < 10;
+  }
+
+  private trySetPeatOnFire() {
+    const nearestPeat = this.getNearestPeat();
+    if (nearestPeat && this.isPlayerNearPeat(nearestPeat)) {
+      console.log("Peat set on fire!");
+      nearestPeat.setTint(0xff6600);
+      this.peat = this.peat.filter((p) => p !== nearestPeat);
+    } else {
+      console.log("No peat nearby to set on fire!");
     }
   }
 
