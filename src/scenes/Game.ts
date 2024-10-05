@@ -1,15 +1,14 @@
-import { Input, Scene, Physics, GameObjects } from "phaser";
+import { Input, Scene, Physics } from "phaser";
 import { Player } from "../sprites/player";
 import { HUD } from "./HUD";
 
 export class Game extends Scene {
   private player!: Player;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+  private plantKey!: Phaser.Input.Keyboard.Key;
   private colliders!: Physics.Arcade.StaticGroup;
-  private sandArea!: GameObjects.Polygon;
-  private nanemSprite!: GameObjects.TileSprite;
-  private sandShape!: Phaser.Geom.Polygon;
   private hudScene!: HUD;
+  private plantableArea!: Phaser.Geom.Rectangle;
 
   constructor() {
     super("Game");
@@ -48,6 +47,8 @@ export class Game extends Scene {
       right: Input.Keyboard.KeyCodes.D,
     }) as Phaser.Types.Input.Keyboard.CursorKeys;
 
+    this.plantKey = this.input.keyboard?.addKey(Input.Keyboard.KeyCodes.SPACE)!;
+
     this.createColliders();
     this.physics.add.collider(this.player, this.colliders);
 
@@ -55,37 +56,7 @@ export class Game extends Scene {
     this.cameras.main.setBounds(0, 0, bg.width, bg.height);
     this.cameras.main.setZoom(1.5);
 
-    // Calculate bounds of the sand shape
-    const bounds = this.calculatePolygonBounds(this.sandShape.points);
-
-    // Create the nanem sprite (initially invisible)
-    this.nanemSprite = this.add.tileSprite(
-      bounds.x,
-      bounds.y,
-      bounds.width,
-      bounds.height,
-      "nanem"
-    );
-    this.nanemSprite.setOrigin(0, 0);
-    this.nanemSprite.setVisible(false);
-    this.nanemSprite.setDepth(1);
-
-    // Create a mask for the nanem sprite
-    const mask = this.make.graphics({});
-    mask.fillStyle(0xffffff);
-    mask.beginPath();
-    mask.moveTo(this.sandShape.points[0].x, this.sandShape.points[0].y);
-    for (let i = 1; i < this.sandShape.points.length; i++) {
-      mask.lineTo(this.sandShape.points[i].x, this.sandShape.points[i].y);
-    }
-    mask.closePath();
-    mask.fill();
-
-    // Apply the mask to the nanem sprite
-    this.nanemSprite.setMask(mask.createGeometryMask());
-
-    // Add event listener for the Return key
-    this.input.keyboard?.on("keydown-ENTER", this.changeSandTexture, this);
+    this.plantableArea = new Phaser.Geom.Rectangle(120, 120, 560, 360);
   }
 
   update() {
@@ -100,6 +71,10 @@ export class Game extends Scene {
       } else {
         this.player.stopMoving();
       }
+
+      if (Phaser.Input.Keyboard.JustDown(this.plantKey)) {
+        this.tryPlant();
+      }
     }
   }
 
@@ -108,52 +83,18 @@ export class Game extends Scene {
     this.colliders.add(
       this.add.rectangle(0, 0, 120, 120, 0x000000, 0).setOrigin(0, 0)
     );
-
-    this.sandShape = new Phaser.Geom.Polygon([
-      100, 100, 500, 100, 520, 150, 510, 200, 520, 250, 500, 300, 100, 300, 80,
-      250, 90, 200, 80, 150,
-    ]);
-
-    this.sandArea = this.add.polygon(
-      0,
-      0,
-      this.sandShape.points,
-      0xc2b280,
-      0.5
-    );
-    this.physics.add.existing(this.sandArea, true);
-    this.colliders.add(this.sandArea);
   }
 
-  private changeSandTexture() {
-    if (this.player && this.sandArea) {
-      const playerBounds = this.player.getBounds();
-      const sandBounds = this.calculatePolygonBounds(this.sandShape.points);
-
-      if (
-        Phaser.Geom.Intersects.RectangleToRectangle(playerBounds, sandBounds)
-      ) {
-        // Player is in the sand area, show the nanem texture
-        this.nanemSprite.setVisible(true);
-      }
-    }
+  private isPlayerOverPlantableArea(): boolean {
+    return this.plantableArea.contains(this.player.x, this.player.y);
   }
 
-  private calculatePolygonBounds(
-    points: Phaser.Types.Math.Vector2Like[]
-  ): Phaser.Geom.Rectangle {
-    let minX = Infinity;
-    let minY = Infinity;
-    let maxX = -Infinity;
-    let maxY = -Infinity;
-
-    for (const point of points) {
-      minX = Math.min(minX, point.x);
-      minY = Math.min(minY, point.y);
-      maxX = Math.max(maxX, point.x);
-      maxY = Math.max(maxY, point.y);
+  private tryPlant() {
+    if (this.isPlayerOverPlantableArea()) {
+      this.add.image(this.player.x, this.player.y, "nanem").setOrigin(0.5, 1);
+      console.log("Planted!");
+    } else {
+      console.log("Cannot plant here!");
     }
-
-    return new Phaser.Geom.Rectangle(minX, minY, maxX - minX, maxY - minY);
   }
 }
