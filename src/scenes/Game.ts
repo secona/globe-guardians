@@ -1,6 +1,6 @@
 import { Input, Scene, Physics } from "phaser";
-import { Player } from "../sprites/player";
-import { ElementState } from "../states/ElementState";
+import { Player } from "../sprites/player"; import { ElementState } from "../states/ElementState";
+import { ToolState } from "../states/ToolState";
 
 export class Game extends Scene {
   private player!: Player;
@@ -14,10 +14,12 @@ export class Game extends Scene {
   private hudScene: Phaser.Scenes.ScenePlugin;
 
   private elementState: ElementState;
+  private toolState: ToolState;
 
   constructor() {
     super("Game");
     this.elementState = new ElementState();
+    this.toolState = new ToolState();
   }
 
   init() {
@@ -72,6 +74,11 @@ export class Game extends Scene {
     this.plantableArea = new Phaser.Geom.Rectangle(250, 250, 250, 260);
 
     this.player.setDepth(1);
+
+    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ONE)?.on('down', () => this.toolState.setSelectedTool(1))
+    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.TWO)?.on('down', () => this.toolState.setSelectedTool(2))
+    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.THREE)?.on('down', () => this.toolState.setSelectedTool(3))
+    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR)?.on('down', () => this.toolState.setSelectedTool(4))
   }
 
   update() {
@@ -89,6 +96,7 @@ export class Game extends Scene {
 
       if (Phaser.Input.Keyboard.JustDown(this.plantKey)) {
         this.hudScene.launch('HUD', { elementState: this.elementState });
+        console.log(this.toolState.getSelectedTool());
         this.tryPlant();
       }
     }
