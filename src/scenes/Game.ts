@@ -1,5 +1,6 @@
 import { Input, Scene, Physics, GameObjects } from "phaser";
 import { Player } from "../sprites/player";
+import { HUD } from "./HUD";
 
 export class Game extends Scene {
   private player!: Player;
@@ -8,12 +9,16 @@ export class Game extends Scene {
   private sandArea!: GameObjects.Polygon;
   private nanemSprite!: GameObjects.TileSprite;
   private sandShape!: Phaser.Geom.Polygon;
+  private hudScene!: HUD;
 
   constructor() {
     super("Game");
   }
 
-  init() {}
+  init() {
+    this.scene.launch("HUD");
+    this.hudScene = this.scene.get("HUD") as HUD;
+  }
 
   preload() {
     this.load.path = "assets/";
@@ -26,7 +31,6 @@ export class Game extends Scene {
   }
 
   create() {
-    this.scene.start("HUD");
     const bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
     this.physics.world.setBounds(0, 0, bg.width, bg.height);
 
