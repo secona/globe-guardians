@@ -39,7 +39,7 @@ export class Game extends Scene {
   }
 
   init() {
-    this.hud()
+    this.hud();
   }
 
   preload() {

@@ -14,6 +14,7 @@ export class Game extends Scene {
   private toolState: ToolState;
   private statsState: StatsState;
   private trucks: Phaser.GameObjects.Image[] = [];
+  private aerosol!: Phaser.GameObjects.Image;
 
   constructor() {
     super("Game");
@@ -30,12 +31,17 @@ export class Game extends Scene {
     });
     this.load.image("bg", "kota.png");
     this.load.image("truk", "truk.png");
+    this.load.image("aerosol", "aerosol.png");
   }
 
   create() {
     this.trucks = [];
     const bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
     this.physics.world.setBounds(0, 0, bg.width, bg.height);
+    this.aerosol = this.add
+      .image(20, 0, "aerosol")
+      .setOrigin(0, 0)
+      .setDepth(10);
 
     this.player = new Player({
       scene: this,
@@ -111,7 +117,7 @@ export class Game extends Scene {
         this.physics.world.bounds.width,
         this.physics.world.bounds.height,
         0x343434,
-        0.98
+        0.95
       )
       .setOrigin(0, 0)
       .setDepth(2);
@@ -139,6 +145,15 @@ export class Game extends Scene {
   }
 
   update() {
+    if (this.player.y > 435) {
+      this.player.y = 435;
+    }
+    if (this.player.y < 150) {
+      this.player.y = 150;
+    }
+    this.aerosol.x = this.player.x - 97;
+    this.aerosol.y = this.player.y - 200;
+
     if (this.player && this.cursors && !this.isModalOpen) {
       const direction = new Phaser.Math.Vector2(0, 0);
       direction.x = +this.cursors.right.isDown - +this.cursors.left.isDown;
@@ -153,16 +168,41 @@ export class Game extends Scene {
     }
 
     const sample = Math.random();
-    if (sample < 0.01 && this.trucks.length < 10) {
+    if (sample < 0.01 && this.trucks.length < 5) {
       const truck = this.add
-        .image(this.player.x + 150, this.player.y, "truk")
+        .image(
+          this.player.x + 250,
+          Math.min(
+            Math.max(this.player.y + Math.random() * 200 - 100, 100),
+            300
+          ),
+          "truk"
+        )
         .setOrigin(0, 0);
+
+      this.trucks.push(truck);
     }
+
+    if (this.player.x == 6300) {
+      this.win();
+    }
+
     for (const truck of this.trucks) {
+      if (
+        truck.x >= this.player.x &&
+        truck.x <= this.player.x + 42 &&
+        truck.y >= this.player.y &&
+        truck.y + 64 >= this.player.y
+      ) {
+        this.die();
+      }
       truck.x -= 1.5;
-      if (truck.x < 0) {
-        truck.x = this.physics.world.bounds.width;
-        truck.y = this.player.y + Math.random() * 200 - 100;
+      if (truck.x - this.player.x > 500 && sample < 0.5) {
+        truck.x = this.player.x + 500;
+        truck.y = Math.min(
+          this.player.y + Math.max(Math.random() * 200 - 100, 100),
+          300
+        );
       }
     }
   }
@@ -172,5 +212,18 @@ export class Game extends Scene {
     this.colliders.add(
       this.add.rectangle(0, 0, 120, 120, 0x000000, 0).setOrigin(0, 0)
     );
+  }
+
+  private die() {
+    for (const truck of this.trucks) {
+      truck.destroy();
+    }
+    this.trucks = [];
+    this.player.x = 200;
+    this.player.y = 400;
+  }
+
+  private win() {
+    console.log("You win!");
   }
 }
