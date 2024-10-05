@@ -1,5 +1,6 @@
 import { GameObjects, Input, Scene } from "phaser";
 import { MainMenuState } from "../states/MainMenuState";
+import { first } from "../constants/dialogs";
 
 export class MainMenu extends Scene {
   mainMenuState: MainMenuState;
@@ -31,7 +32,7 @@ export class MainMenu extends Scene {
       ?.on('down', () => this.mainMenuState.next())
 
     this.input.keyboard
-      ?.addKey(Input.Keyboard.KeyCodes.SPACE)
+      ?.addKey(Input.Keyboard.KeyCodes.ENTER)
       ?.on('down', () => this.handleSpace())
   }
 
@@ -42,7 +43,9 @@ export class MainMenu extends Scene {
 
   handleSpace() {
     if (this.mainMenuState.selected == 0) {
-      this.scene.start('Game')
+      this.scene.start('DialogScene', {
+        dialogs: first,
+      })
     }
   }
 }

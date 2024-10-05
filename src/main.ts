@@ -22,7 +22,7 @@ const config: Types.Core.GameConfig = {
     mode: Scale.FIT,
     autoCenter: Scale.CENTER_BOTH,
   },
-  scene: [DialogScene, MainGame, HUD, ChangeScene, Secondscene],
+  scene: [MainMenu, DialogScene, MainGame, HUD, ChangeScene, Secondscene],
 };
 
 export default new Game(config);
