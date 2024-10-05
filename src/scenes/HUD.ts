@@ -1,4 +1,5 @@
 import { GameObjects, Scene } from "phaser";
+import { ElementState } from "../states/ElementState";
 
 export class HUD extends Scene {
     energyMask!: GameObjects.Sprite
@@ -7,6 +8,8 @@ export class HUD extends Scene {
     energyValue: number = 100
 
     moneyBar!: GameObjects.Sprite;
+
+    elementState!: ElementState;
 
     constructor() {
         super('HUD');
@@ -25,6 +28,10 @@ export class HUD extends Scene {
         this.load.image("ph-container", "ph-container.png");
         this.load.image("ph-container-filled", "ph-container-filled.png");
         this.load.image("money-bar", "money-bar.png");
+    }
+
+    init(data: { elementState: ElementState }) {
+        this.elementState = data.elementState;
     }
 
     create() {
@@ -64,10 +71,10 @@ export class HUD extends Scene {
 
         this.energyContainerFilled.mask = new Phaser.Display.Masks.BitmapMask(this, this.energyMask)
 
-        const phosphorus = this.makeElementBar("phosphorus", "Phosphorus", "#BD7042", 20 + this.moneyBar.width, 90);
-        const potassium = this.makeElementBar("potassium", "Potassium", "#8868F1", 30 + this.moneyBar.width + phosphorus.width, 90);
-        const nitrate = this.makeElementBar("nitrate", "Nitrate", "#B2AF00", 40 + this.moneyBar.width + phosphorus.width + potassium.width, 90);
-        this.makeElementBar("ph", "pH", "#E54225", 50 + this.moneyBar.width + phosphorus.width + potassium.width + nitrate.width, 30);
+        const phosphorus = this.makeElementBar("phosphorus", "Phosphorus", "#BD7042", 20 + this.moneyBar.width, this.elementState.phosphorus);
+        const potassium = this.makeElementBar("potassium", "Potassium", "#8868F1", 30 + this.moneyBar.width + phosphorus.width, this.elementState.potassium);
+        const nitrate = this.makeElementBar("nitrate", "Nitrate", "#B2AF00", 40 + this.moneyBar.width + phosphorus.width + potassium.width, this.elementState.nitrate);
+        this.makeElementBar("ph", "pH", "#E54225", 50 + this.moneyBar.width + phosphorus.width + potassium.width + nitrate.width, this.elementState.ph);
     }
 
     makeElementBar(elementName: string, displayName: string, color: string, offsetX: number, value: number) {

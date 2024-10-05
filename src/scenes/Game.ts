@@ -1,24 +1,27 @@
 import { Input, Scene, Physics } from "phaser";
 import { Player } from "../sprites/player";
-import { HUD } from "./HUD";
+import { ElementState } from "../states/ElementState";
 
 export class Game extends Scene {
   private player!: Player;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private plantKey!: Phaser.Input.Keyboard.Key;
   private colliders!: Physics.Arcade.StaticGroup;
-  private hudScene!: HUD;
   private plantableArea!: Phaser.Geom.Rectangle;
   private plantedCrops: Phaser.GameObjects.Image[] = [];
   private tree: Phaser.GameObjects.Image[] = [];
 
+  private hudScene: Phaser.Scenes.ScenePlugin;
+
+  private elementState: ElementState;
+
   constructor() {
     super("Game");
+    this.elementState = new ElementState();
   }
 
   init() {
-    this.scene.launch("HUD");
-    this.hudScene = this.scene.get("HUD") as HUD;
+    this.hudScene = this.scene.launch("HUD", { elementState: this.elementState });
   }
 
   preload() {
@@ -85,6 +88,7 @@ export class Game extends Scene {
       }
 
       if (Phaser.Input.Keyboard.JustDown(this.plantKey)) {
+        this.hudScene.launch('HUD', { elementState: this.elementState });
         this.tryPlant();
       }
     }
