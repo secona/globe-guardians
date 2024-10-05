@@ -10,6 +10,7 @@ export class Game extends Scene {
   private hudScene!: HUD;
   private plantableArea!: Phaser.Geom.Rectangle;
   private plantedCrops: Phaser.GameObjects.Image[] = [];
+  private tree: Phaser.GameObjects.Image[] = [];
 
   constructor() {
     super("Game");
@@ -28,11 +29,15 @@ export class Game extends Scene {
     });
     this.load.image("bg", "farm.png");
     this.load.image("nanem", "nanem.png");
+    this.load.image("pohon", "pohon.png");
   }
 
   create() {
     const bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
     this.physics.world.setBounds(0, 0, bg.width, bg.height);
+    this.add.image(704, 235, "pohon").setOrigin(0, 0);
+    this.add.image(600, 50, "pohon").setOrigin(0, 0);
+    this.add.image(650, 40, "pohon").setOrigin(0, 0);
 
     this.player = new Player({
       scene: this,
