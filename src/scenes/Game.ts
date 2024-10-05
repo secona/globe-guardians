@@ -4,6 +4,7 @@ import { ElementState } from "../states/ElementState";
 import { ToolState } from "../states/ToolState";
 import { Notification } from "../objects/modal";
 import { StatsState } from "../states/StatsState";
+import { TutorialManager } from "../classes/tutorial";
 
 export class Game extends Scene {
   private player!: Player;
@@ -26,6 +27,7 @@ export class Game extends Scene {
   }[] = [];
 
   private hudScene: Phaser.Scenes.ScenePlugin = null!;
+  private tutorialManager!: TutorialManager;
 
   private elementState: ElementState;
   private toolState: ToolState;
@@ -39,7 +41,7 @@ export class Game extends Scene {
   }
 
   init() {
-    this.hud()
+    this.hud();
   }
 
   preload() {
@@ -125,6 +127,9 @@ export class Game extends Scene {
       y: 400,
       texture: "farmer",
     });
+
+    this.tutorialManager = new TutorialManager(this);
+    this.tutorialManager.startTutorial();
 
     this.cursors = this.input.keyboard?.addKeys({
       up: Input.Keyboard.KeyCodes.W,
