@@ -93,6 +93,9 @@ export class Game extends Scene {
     this.input.keyboard
       ?.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR)
       ?.on("down", () => this.toolState.setSelectedTool(4));
+    this.input.keyboard
+      ?.addKey(Phaser.Input.Keyboard.KeyCodes.FIVE)
+      ?.on("down", () => this.toolState.setSelectedTool(5));
   }
 
   update() {
