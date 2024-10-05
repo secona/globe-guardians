@@ -18,6 +18,11 @@ export class Game extends Scene {
   private tree: Phaser.GameObjects.Image[] = [];
   private notification: Notification | null = null;
   private isModalOpen: boolean = false;
+  private cutTrees: Phaser.GameObjects.Image[] = [];
+  private burningPeat: {
+    peat: Phaser.GameObjects.Image;
+    fire: Phaser.GameObjects.Sprite;
+  }[] = [];
 
   private hudScene: Phaser.Scenes.ScenePlugin = null!;
 
@@ -47,6 +52,11 @@ export class Game extends Scene {
     this.load.image("pohon", "pohon.png");
     this.load.image("peat", "peat.png");
     this.load.image("sawit", "sawit.png");
+    this.load.image("pohon_kepotong", "pohon_kepotong.png");
+    this.load.spritesheet("kebakaran", "kebakaran.gif", {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
   }
 
   create() {
@@ -154,6 +164,16 @@ export class Game extends Scene {
     this.input.keyboard
       ?.addKey(Phaser.Input.Keyboard.KeyCodes.FIVE)
       ?.on("down", () => this.toolState.setSelectedTool(5));
+
+    this.anims.create({
+      key: "burn",
+      frames: this.anims.generateFrameNumbers("kebakaran", {
+        start: 0,
+        end: -1,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
   }
 
   update() {
@@ -189,12 +209,21 @@ export class Game extends Scene {
 
   private tryCutTree() {
     const nearestTree = this.getNearestTree();
-
     if (nearestTree && this.isPlayerNearTree(nearestTree)) {
-      nearestTree.destroy();
-      console.log("Tree cut down!");
+      const cutTree = this.add
+        .image(nearestTree.x, nearestTree.y, "pohon_kepotong")
+        .setOrigin(nearestTree.originX, nearestTree.originY)
+        .setScale(nearestTree.scaleX, nearestTree.scaleY);
 
       this.tree = this.tree.filter((tree) => tree !== nearestTree);
+      nearestTree.destroy();
+
+      if (!this.cutTrees) {
+        this.cutTrees = [];
+      }
+      this.cutTrees.push(cutTree);
+
+      console.log("Tree cut down!");
     } else {
       console.log("No tree to cut here!");
     }
@@ -235,7 +264,21 @@ export class Game extends Scene {
     const nearestPeat = this.getNearestPeat();
     if (nearestPeat && this.isPlayerNearPeat(nearestPeat)) {
       console.log("Peat set on fire!");
+
+      const fire = this.add
+        .sprite(nearestPeat.x, nearestPeat.y, "kebakaran")
+        .setOrigin(nearestPeat.originX, nearestPeat.originY)
+        .setScale(nearestPeat.scaleX, nearestPeat.scaleY);
+
+      fire.play("burn");
+
       nearestPeat.setTint(0xff6600);
+
+      if (!this.burningPeat) {
+        this.burningPeat = [];
+      }
+      this.burningPeat.push({ peat: nearestPeat, fire: fire });
+
       this.peat = this.peat.filter((p) => p !== nearestPeat);
     } else {
       console.log("No peat nearby to set on fire!");
