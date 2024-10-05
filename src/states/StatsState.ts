@@ -7,12 +7,12 @@ export class StatsState {
     this.energy = 20;
   }
 
-  decrement(key: 'energy' | 'money', value: number) {
+  decrement(key: "energy" | "money", value: number) {
     switch (key) {
-      case 'energy':
+      case "energy":
         if (this.energy >= value) this.energy -= value;
         break;
-      case 'money':
+      case "money":
         if (this.money >= value) this.money -= value;
         break;
     }
@@ -23,8 +23,8 @@ export class StatsState {
   }
 
   payForBurning() {
-    this.decrement('money', 1);
-    this.decrement('energy', 1);
+    this.decrement("money", 1);
+    this.decrement("energy", 1);
   }
 
   enoughForCutting() {
@@ -32,7 +32,11 @@ export class StatsState {
   }
 
   payForCutting() {
-    this.decrement('money', 2)
-    this.decrement('energy', 5)
+    this.decrement("money", 2);
+    this.decrement("energy", 5);
+  }
+
+  getEnergy() {
+    return this.energy;
   }
 }
