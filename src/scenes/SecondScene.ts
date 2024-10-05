@@ -60,9 +60,12 @@ export class Game extends Scene {
         y < truckAreaStartY + truckAreaHeight;
         y += truckGridSize
       ) {
-        if (Math.random() < 0.7) {
-          const offsetX = Math.random() * 800 - 10;
-          const offsetY = Math.random() * 400 + 200;
+        if (Math.random() > 0.7) {
+          const offsetX = Math.max(Math.random() * 800, 600);
+          const offsetY = Math.min(
+            Math.max(Math.random() * 400 + 100, 200),
+            600
+          );
           const tree = this.add.image(offsetX, offsetY, "truk").setOrigin(0, 0);
           this.trucks.push(tree);
         }
@@ -146,6 +149,20 @@ export class Game extends Scene {
         this.player.move(direction);
       } else {
         this.player.stopMoving();
+      }
+    }
+
+    const sample = Math.random();
+    if (sample < 0.01 && this.trucks.length < 10) {
+      const truck = this.add
+        .image(this.player.x + 150, this.player.y, "truk")
+        .setOrigin(0, 0);
+    }
+    for (const truck of this.trucks) {
+      truck.x -= 1.5;
+      if (truck.x < 0) {
+        truck.x = this.physics.world.bounds.width;
+        truck.y = this.player.y + Math.random() * 200 - 100;
       }
     }
   }
