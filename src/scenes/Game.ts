@@ -4,6 +4,8 @@ import { ElementState } from "../states/ElementState";
 import { ToolState } from "../states/ToolState";
 import { Notification } from "../objects/modal";
 import { StatsState } from "../states/StatsState";
+import { TutorialManager } from "../classes/tutorial";
+import { ChangeScene } from "./changescene";
 
 export class Game extends Scene {
   private player!: Player;
@@ -26,10 +28,15 @@ export class Game extends Scene {
   }[] = [];
 
   private hudScene: Phaser.Scenes.ScenePlugin = null!;
+  private tutorialManager!: TutorialManager;
 
   private elementState: ElementState;
   private toolState: ToolState;
   private statsState: StatsState;
+  private dialogBox!: Phaser.GameObjects.Rectangle;
+  private nameText!: Phaser.GameObjects.Text;
+  private dialogText!: Phaser.GameObjects.Text;
+  private continueText!: Phaser.GameObjects.Text;
 
   constructor() {
     super("Game");
@@ -126,6 +133,9 @@ export class Game extends Scene {
       texture: "farmer",
     });
 
+    this.tutorialManager = new TutorialManager(this);
+    this.tutorialManager.startTutorial();
+
     this.cursors = this.input.keyboard?.addKeys({
       up: Input.Keyboard.KeyCodes.W,
       left: Input.Keyboard.KeyCodes.A,
@@ -178,6 +188,16 @@ export class Game extends Scene {
   }
 
   update() {
+    if (this.burningPeat.length > 0) {
+      this.elementState.decrementAll(this.burningPeat.length);
+      this.hud();
+    }
+
+    if (this.statsState.getEnergy() <= 1) {
+      this.scene.start("ChangeScene");
+      return;
+    }
+
     if (this.player && this.cursors && !this.isModalOpen) {
       const direction = new Phaser.Math.Vector2(0, 0);
       direction.x = +this.cursors.right.isDown - +this.cursors.left.isDown;
@@ -269,11 +289,10 @@ export class Game extends Scene {
   }
 
   private trySetPeatOnFire() {
+    const nearestPeat = this.getNearestPeat();
     if (!this.statsState.enoughForBurning()) {
       return;
     }
-
-    const nearestPeat = this.getNearestPeat();
     if (nearestPeat && this.isPlayerNearPeat(nearestPeat)) {
       console.log("Peat set on fire!");
 
