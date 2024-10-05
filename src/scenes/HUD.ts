@@ -1,5 +1,6 @@
 import { GameObjects, Scene } from "phaser";
 import { ElementState } from "../states/ElementState";
+import { ToolState } from "../states/ToolState";
 
 export class HUD extends Scene {
     energyMask!: GameObjects.Sprite
@@ -10,6 +11,7 @@ export class HUD extends Scene {
     moneyBar!: GameObjects.Sprite;
 
     elementState!: ElementState;
+    toolState!: ToolState;
 
     constructor() {
         super('HUD');
@@ -28,10 +30,13 @@ export class HUD extends Scene {
         this.load.image("ph-container", "ph-container.png");
         this.load.image("ph-container-filled", "ph-container-filled.png");
         this.load.image("money-bar", "money-bar.png");
+        this.load.image("toolbar", "toolbar.png");
+        this.load.image("circle", "circle.png");
     }
 
-    init(data: { elementState: ElementState }) {
+    init(data: { elementState: ElementState, toolState: ToolState }) {
         this.elementState = data.elementState;
+        this.toolState = data.toolState
     }
 
     create() {
@@ -75,6 +80,16 @@ export class HUD extends Scene {
         const potassium = this.makeElementBar("potassium", "Potassium", "#8868F1", 30 + this.moneyBar.width + phosphorus.width, this.elementState.potassium);
         const nitrate = this.makeElementBar("nitrate", "Nitrate", "#B2AF00", 40 + this.moneyBar.width + phosphorus.width + potassium.width, this.elementState.nitrate);
         this.makeElementBar("ph", "pH", "#E54225", 50 + this.moneyBar.width + phosphorus.width + potassium.width + nitrate.width, this.elementState.ph);
+        
+        const toolbar = this.add.sprite(0, 0, "toolbar")
+        toolbar.setPosition(400, 600 - toolbar.height / 2 - 15)
+
+        const circle = this.add.sprite(0, 0, "circle")
+        circle.setScale(0.2, 0.2)
+        circle.setPosition(
+            toolbar.x - toolbar.width / 2 + ((this.toolState.getSelectedTool() - 1) * 78) + 15,
+            toolbar.y - 25
+        )
     }
 
     makeElementBar(elementName: string, displayName: string, color: string, offsetX: number, value: number) {

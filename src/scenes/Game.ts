@@ -23,7 +23,7 @@ export class Game extends Scene {
   }
 
   init() {
-    this.hudScene = this.scene.launch("HUD", { elementState: this.elementState });
+    this.hudScene = this.scene.launch("HUD", { elementState: this.elementState, toolState: this.toolState });
   }
 
   preload() {
@@ -75,10 +75,25 @@ export class Game extends Scene {
 
     this.player.setDepth(1);
 
-    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ONE)?.on('down', () => this.toolState.setSelectedTool(1))
-    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.TWO)?.on('down', () => this.toolState.setSelectedTool(2))
-    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.THREE)?.on('down', () => this.toolState.setSelectedTool(3))
-    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR)?.on('down', () => this.toolState.setSelectedTool(4))
+    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ONE)?.on('down', () => {
+      this.toolState.setSelectedTool(1);
+      this.hudScene.launch('HUD', { elementState: this.elementState, toolState: this.toolState });
+    })
+
+    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.TWO)?.on('down', () => {
+      this.toolState.setSelectedTool(2);
+      this.hudScene.launch('HUD', { elementState: this.elementState, toolState: this.toolState });
+    })
+
+    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.THREE)?.on('down', () => {
+      this.toolState.setSelectedTool(3);
+      this.hudScene.launch('HUD', { elementState: this.elementState, toolState: this.toolState });
+    })
+
+    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR)?.on('down', () => {
+      this.toolState.setSelectedTool(4)
+      this.hudScene.launch('HUD', { elementState: this.elementState, toolState: this.toolState });
+    })
   }
 
   update() {
@@ -95,7 +110,7 @@ export class Game extends Scene {
       }
 
       if (Phaser.Input.Keyboard.JustDown(this.plantKey)) {
-        this.hudScene.launch('HUD', { elementState: this.elementState });
+        this.hudScene.launch('HUD', { elementState: this.elementState, toolState: this.toolState });
         console.log(this.toolState.getSelectedTool());
         this.tryPlant();
       }
