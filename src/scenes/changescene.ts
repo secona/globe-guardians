@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { Game } from "./Game";
+import { Secondscene } from "./Secondscene";
 
 export class ChangeScene extends Phaser.Scene {
   private dialogBox!: Phaser.GameObjects.Rectangle;
@@ -14,7 +14,7 @@ export class ChangeScene extends Phaser.Scene {
   private enterKey!: Phaser.Input.Keyboard.Key;
 
   constructor() {
-    super("ChangeScene");
+    super({ key: "ChangeScene", active: false });
     this.dialogs = [
       {
         name: "OJAN",
@@ -29,40 +29,42 @@ export class ChangeScene extends Phaser.Scene {
   }
 
   create() {
+    this.cameras.main.setBackgroundColor("rgba(0,0,0,0.5)");
+
     const ojanImage = this.add.image(650, 300, "ojan");
-    ojanImage.setDepth(1000);
+    ojanImage.setDepth(1);
 
     this.createDialogBox();
-
     this.enterKey = this.input!.keyboard!.addKey(
       Phaser.Input.Keyboard.KeyCodes.ENTER
     );
     this.enterKey.on("down", this.showNextDialog, this);
-
     this.showNextDialog();
   }
 
   private createDialogBox() {
     this.dialogBox = this.add.rectangle(400, 500, 780, 180, 0xfff2cc);
     this.dialogBox.setStrokeStyle(4, 0xd2691e);
-    this.dialogBox.setDepth(1000);
+    this.dialogBox.setDepth(2);
 
     this.nameText = this.add.text(20, 420, "", {
       fontSize: "24px",
       color: "#000",
     });
-    this.nameText.setDepth(1001);
+    this.nameText.setDepth(3);
+
     this.dialogText = this.add.text(20, 460, "", {
       fontSize: "20px",
       color: "#000",
       wordWrap: { width: 760 },
     });
-    this.dialogText.setDepth(1001);
+    this.dialogText.setDepth(3);
+
     this.continueText = this.add.text(720, 640, "[Continue]", {
       fontSize: "18px",
       color: "#666",
     });
-    this.continueText.setDepth(1001);
+    this.continueText.setDepth(3);
 
     this.hideDialog();
   }
@@ -98,6 +100,7 @@ export class ChangeScene extends Phaser.Scene {
       this.currentDialogIndex++;
     } else {
       this.hideDialog();
+      this.startFadeOut();
     }
   }
 
@@ -108,5 +111,22 @@ export class ChangeScene extends Phaser.Scene {
       );
       this.textIndex++;
     }
+  }
+
+  private startFadeOut() {
+    this.cameras.main.fade(1000, 0, 0, 0);
+    this.cameras.main.once("camerafadeoutcomplete", () => {
+      if (this.scene.get("Game") && this.scene.isActive("Game")) {
+        this.scene.stop("Game");
+      }
+
+      if (this.scene.get("Secondscene")) {
+        this.scene.start("Secondscene");
+      } else {
+        console.error(
+          "SecondScene not found. Make sure it's properly added to your game configuration."
+        );
+      }
+    });
   }
 }
