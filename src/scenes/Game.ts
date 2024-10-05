@@ -178,6 +178,11 @@ export class Game extends Scene {
   }
 
   update() {
+    if (this.burningPeat.length > 0) {
+      this.elementState.decrementAll(this.burningPeat.length);
+      this.hud();
+    }
+
     if (this.player && this.cursors && !this.isModalOpen) {
       const direction = new Phaser.Math.Vector2(0, 0);
       direction.x = +this.cursors.right.isDown - +this.cursors.left.isDown;
