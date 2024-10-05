@@ -22,6 +22,7 @@ export class Game extends Scene {
   }
 
   create() {
+    this.scene.start("HUD");
     const bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
 
     this.physics.world.setBounds(0, 0, bg.width, bg.height);
