@@ -3,6 +3,7 @@ import { Player } from "../sprites/player";
 import { ElementState } from "../states/ElementState";
 import { ToolState } from "../states/ToolState";
 import { Notification } from "../objects/modal";
+import { StatsState } from "../states/StatsState";
 
 export class Game extends Scene {
   private player!: Player;
@@ -28,17 +29,17 @@ export class Game extends Scene {
 
   private elementState: ElementState;
   private toolState: ToolState;
+  private statsState: StatsState;
 
   constructor() {
     super("Game");
     this.elementState = new ElementState();
     this.toolState = new ToolState();
+    this.statsState = new StatsState();
   }
 
   init() {
-    this.hudScene = this.scene.launch("HUD", {
-      elementState: this.elementState,
-    });
+    this.hud()
   }
 
   preload() {
@@ -190,7 +191,7 @@ export class Game extends Scene {
       }
 
       if (Phaser.Input.Keyboard.JustDown(this.plantKey)) {
-        this.hudScene.launch("HUD", { elementState: this.elementState });
+        this.hud();
         console.log(this.toolState.getSelectedTool());
         this.tryPlant();
       }
@@ -208,6 +209,10 @@ export class Game extends Scene {
   }
 
   private tryCutTree() {
+    if (!this.statsState.enoughForCutting()) {
+      return;
+    }
+
     const nearestTree = this.getNearestTree();
     if (nearestTree && this.isPlayerNearTree(nearestTree)) {
       const cutTree = this.add
@@ -221,7 +226,10 @@ export class Game extends Scene {
       if (!this.cutTrees) {
         this.cutTrees = [];
       }
+
       this.cutTrees.push(cutTree);
+      this.statsState.payForCutting();
+      this.hud();
 
       console.log("Tree cut down!");
     } else {
@@ -261,6 +269,10 @@ export class Game extends Scene {
   }
 
   private trySetPeatOnFire() {
+    if (!this.statsState.enoughForBurning()) {
+      return;
+    }
+
     const nearestPeat = this.getNearestPeat();
     if (nearestPeat && this.isPlayerNearPeat(nearestPeat)) {
       console.log("Peat set on fire!");
@@ -277,7 +289,10 @@ export class Game extends Scene {
       if (!this.burningPeat) {
         this.burningPeat = [];
       }
+
       this.burningPeat.push({ peat: nearestPeat, fire: fire });
+      this.statsState.payForBurning();
+      this.hud();
 
       this.peat = this.peat.filter((p) => p !== nearestPeat);
     } else {
@@ -403,5 +418,13 @@ export class Game extends Scene {
     if (this.input.mouse) {
       this.input.mouse.enabled = true;
     }
+  }
+
+  private hud() {
+    this.hudScene = this.scene.launch("HUD", {
+      elementState: this.elementState,
+      toolState: this.toolState,
+      statsState: this.statsState,
+    });
   }
 }

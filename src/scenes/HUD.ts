@@ -1,6 +1,7 @@
 import { GameObjects, Scene } from "phaser";
 import { ElementState } from "../states/ElementState";
 import { ToolState } from "../states/ToolState";
+import { StatsState } from "../states/StatsState";
 
 export class HUD extends Scene {
     energyMask!: GameObjects.Sprite
@@ -12,6 +13,7 @@ export class HUD extends Scene {
 
     elementState!: ElementState;
     toolState!: ToolState;
+    statsState!: StatsState;
 
     constructor() {
         super('HUD');
@@ -34,9 +36,10 @@ export class HUD extends Scene {
         this.load.image("circle", "circle.png");
     }
 
-    init(data: { elementState: ElementState, toolState: ToolState }) {
+    init(data: { elementState: ElementState, toolState: ToolState, statsState: StatsState }) {
         this.elementState = data.elementState;
-        this.toolState = data.toolState
+        this.toolState = data.toolState;
+        this.statsState = data.statsState;
     }
 
     create() {
@@ -46,7 +49,7 @@ export class HUD extends Scene {
         this.add.text(
             this.moneyBar.x - (this.moneyBar.width / 2) + 10,
             this.moneyBar.y + (this.moneyBar.height / 2),
-            '20',
+            this.statsState.money.toString(),
             {
                 align: 'center',
                 fontSize: 12,
@@ -62,7 +65,7 @@ export class HUD extends Scene {
         this.add.text(
             this.energyContainer.x - (this.energyContainer.width / 2) + 10,
             this.energyContainer.y + (this.energyContainer.height/ 2),
-            '20 / 20',
+            this.statsState.energy + ' / 20',
             {
                 align: 'center',
                 fontSize: 12,
@@ -72,7 +75,7 @@ export class HUD extends Scene {
 
         this.energyMask = this.add.sprite(this.energyContainer.x, this.energyContainer.y, "energy-container").setOrigin(1, 0);
         this.energyMask.visible = false;
-        this.energyMask.x -= ((100 - this.energyValue) / 100) * this.energyMask.width;
+        this.energyMask.x -= ((100 - this.statsState.energy * 5) / 100) * this.energyMask.width;
 
         this.energyContainerFilled.mask = new Phaser.Display.Masks.BitmapMask(this, this.energyMask)
 
