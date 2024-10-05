@@ -13,6 +13,8 @@ export class Game extends Scene {
     }
 
     create () {
+        this.scene.launch('HUD');
+
         this.add.image(512, 384, 'background');
         this.add.image(512, 350, 'logo').setDepth(100);
         this.add.text(512, 490, 'Make something fun!\nand share it with us:\nsupport@phaser.io', {
