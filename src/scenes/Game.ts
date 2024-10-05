@@ -1,6 +1,8 @@
 import { Input, Scene, Physics } from "phaser";
-import { Player } from "../sprites/player"; import { ElementState } from "../states/ElementState";
+import { Player } from "../sprites/player";
+import { ElementState } from "../states/ElementState";
 import { ToolState } from "../states/ToolState";
+import { Notification } from "../objects/modal";
 
 export class Game extends Scene {
   private player!: Player;
@@ -10,8 +12,10 @@ export class Game extends Scene {
   private plantableArea!: Phaser.Geom.Rectangle;
   private plantedCrops: Phaser.GameObjects.Image[] = [];
   private tree: Phaser.GameObjects.Image[] = [];
+  private notification: Notification | null = null;
+  private isModalOpen: boolean = false;
 
-  private hudScene: Phaser.Scenes.ScenePlugin;
+  private hudScene: Phaser.Scenes.ScenePlugin = null!;
 
   private elementState: ElementState;
   private toolState: ToolState;
@@ -23,7 +27,9 @@ export class Game extends Scene {
   }
 
   init() {
-    this.hudScene = this.scene.launch("HUD", { elementState: this.elementState, toolState: this.toolState });
+    this.hudScene = this.scene.launch("HUD", {
+      elementState: this.elementState,
+    });
   }
 
   preload() {
@@ -62,7 +68,7 @@ export class Game extends Scene {
       right: Input.Keyboard.KeyCodes.D,
     }) as Phaser.Types.Input.Keyboard.CursorKeys;
 
-    this.plantKey = this.input.keyboard?.addKey(Input.Keyboard.KeyCodes.SPACE)!;
+    this.plantKey = this.input.keyboard?.addKey(Input.Keyboard.KeyCodes.ONE!)!;
 
     this.createColliders();
     this.physics.add.collider(this.player, this.colliders);
@@ -71,33 +77,26 @@ export class Game extends Scene {
     this.cameras.main.setBounds(0, 0, bg.width, bg.height);
     this.cameras.main.setZoom(1.5);
 
-    this.plantableArea = new Phaser.Geom.Rectangle(250, 250, 250, 260);
+    this.plantableArea = new Phaser.Geom.Rectangle(250, 250, 350, 260);
 
     this.player.setDepth(1);
 
-    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.ONE)?.on('down', () => {
-      this.toolState.setSelectedTool(1);
-      this.hudScene.launch('HUD', { elementState: this.elementState, toolState: this.toolState });
-    })
-
-    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.TWO)?.on('down', () => {
-      this.toolState.setSelectedTool(2);
-      this.hudScene.launch('HUD', { elementState: this.elementState, toolState: this.toolState });
-    })
-
-    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.THREE)?.on('down', () => {
-      this.toolState.setSelectedTool(3);
-      this.hudScene.launch('HUD', { elementState: this.elementState, toolState: this.toolState });
-    })
-
-    this.input.keyboard?.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR)?.on('down', () => {
-      this.toolState.setSelectedTool(4)
-      this.hudScene.launch('HUD', { elementState: this.elementState, toolState: this.toolState });
-    })
+    this.input.keyboard
+      ?.addKey(Phaser.Input.Keyboard.KeyCodes.ONE)
+      ?.on("down", () => this.toolState.setSelectedTool(1));
+    this.input.keyboard
+      ?.addKey(Phaser.Input.Keyboard.KeyCodes.TWO)
+      ?.on("down", () => this.toolState.setSelectedTool(2));
+    this.input.keyboard
+      ?.addKey(Phaser.Input.Keyboard.KeyCodes.THREE)
+      ?.on("down", () => this.toolState.setSelectedTool(3));
+    this.input.keyboard
+      ?.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR)
+      ?.on("down", () => this.toolState.setSelectedTool(4));
   }
 
   update() {
-    if (this.player && this.cursors) {
+    if (this.player && this.cursors && !this.isModalOpen) {
       const direction = new Phaser.Math.Vector2(0, 0);
       direction.x = +this.cursors.right.isDown - +this.cursors.left.isDown;
       direction.y = +this.cursors.down.isDown - +this.cursors.up.isDown;
@@ -110,7 +109,7 @@ export class Game extends Scene {
       }
 
       if (Phaser.Input.Keyboard.JustDown(this.plantKey)) {
-        this.hudScene.launch('HUD', { elementState: this.elementState, toolState: this.toolState });
+        this.hudScene.launch("HUD", { elementState: this.elementState });
         console.log(this.toolState.getSelectedTool());
         this.tryPlant();
       }
@@ -143,11 +142,43 @@ export class Game extends Scene {
         .image(this.player.x, this.player.y, "nanem")
         .setOrigin(0.5, 1);
       this.plantedCrops.push(crop);
+      this.showNotification();
       console.log("Planted!");
     } else if (this.isSpotOccupied(this.player.x, this.player.y)) {
       console.log("This spot is already occupied!");
     } else {
       console.log("Cannot plant here!");
+    }
+  }
+
+  private showNotification() {
+    this.isModalOpen = true;
+    this.notification = new Notification(this);
+    this.notification.on("closed", this.onNotificationClosed, this);
+    this.disableGameInput();
+  }
+
+  private onNotificationClosed = () => {
+    this.isModalOpen = false;
+    this.notification = null;
+    this.enableGameInput();
+  };
+
+  private disableGameInput() {
+    if (this.input.keyboard) {
+      this.input.keyboard.enabled = false;
+    }
+    if (this.input.mouse) {
+      this.input.mouse.enabled = true;
+    }
+  }
+
+  private enableGameInput() {
+    if (this.input.keyboard) {
+      this.input.keyboard.enabled = true;
+    }
+    if (this.input.mouse) {
+      this.input.mouse.enabled = true;
     }
   }
 }
