@@ -1,26 +1,61 @@
-import { Scene } from 'phaser';
+import { Scene } from "phaser";
+import { Player } from "../sprites/player";
+
+interface PlayerAnims {
+  pressedCursor: "up" | "down" | "left" | "right";
+  actionAnimation: string;
+}
 
 export class Game extends Scene {
-    constructor () {
-        super('Game');
+  private player!: Player;
+  private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
+
+  constructor() {
+    super("Game");
+  }
+
+  init() {}
+
+  preload() {
+    this.load.path = "assets/";
+    // Make sure to load your player sprite here
+    this.load.spritesheet("farmer", "farmer.png", {
+      frameWidth: 32,
+      frameHeight: 32,
+    });
+  }
+
+  create() {
+    this.player = new Player({
+      scene: this,
+      x: 100,
+      y: 100,
+      texture: "farmer",
+    });
+
+    this.cursors = this.input?.keyboard?.createCursorKeys()!;
+  }
+
+  update() {
+    const direction = new Phaser.Math.Vector2(0, 0);
+
+    if (this.cursors.left.isDown) {
+      direction.x = -1;
+    } else if (this.cursors.right.isDown) {
+      direction.x = 1;
     }
 
-    preload () {
-        this.load.setPath('assets');
-        
-        this.load.image('background', 'bg.png');
-        this.load.image('logo', 'logo.png');
+    if (this.cursors.up.isDown) {
+      direction.y = -1;
+    } else if (this.cursors.down.isDown) {
+      direction.y = 1;
     }
 
-    create () {
-        this.scene.launch('HUD');
-
-        this.add.image(512, 384, 'background');
-        this.add.image(512, 350, 'logo').setDepth(100);
-        this.add.text(512, 490, 'Make something fun!\nand share it with us:\nsupport@phaser.io', {
-            fontFamily: 'Arial Black', fontSize: 38, color: '#ffffff',
-            stroke: '#000000', strokeThickness: 8,
-            align: 'center'
-        }).setOrigin(0.5).setDepth(100);
+    if (direction.x !== 0 || direction.y !== 0) {
+      direction.normalize();
+      this.player.move(direction);
+    } else {
+      this.player.stopMoving();
     }
+  }
 }
