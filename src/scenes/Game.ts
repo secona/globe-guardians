@@ -30,14 +30,18 @@ export class Game extends Scene {
     this.load.image("bg", "farm.png");
     this.load.image("nanem", "nanem.png");
     this.load.image("pohon", "pohon.png");
+    this.load.image("peat", "peat.png");
   }
 
   create() {
     const bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
     this.physics.world.setBounds(0, 0, bg.width, bg.height);
-    this.add.image(704, 235, "pohon").setOrigin(0, 0);
-    this.add.image(600, 50, "pohon").setOrigin(0, 0);
-    this.add.image(650, 40, "pohon").setOrigin(0, 0);
+    this.add.image(700, 230, "pohon").setOrigin(0, 0);
+    this.add.image(630, 220, "pohon").setOrigin(0, 0);
+    this.add.image(650, 270, "pohon").setOrigin(0, 0);
+    this.add.image(604, 127, "peat").setOrigin(0, 0);
+    this.add.image(596, 95, "peat").setOrigin(0, 0);
+    this.add.image(628, 108, "peat").setOrigin(0, 0);
 
     this.player = new Player({
       scene: this,
