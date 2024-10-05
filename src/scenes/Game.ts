@@ -9,6 +9,7 @@ export class Game extends Scene {
   private colliders!: Physics.Arcade.StaticGroup;
   private hudScene!: HUD;
   private plantableArea!: Phaser.Geom.Rectangle;
+  private plantedCrops: Phaser.GameObjects.Image[] = [];
 
   constructor() {
     super("Game");
@@ -56,7 +57,9 @@ export class Game extends Scene {
     this.cameras.main.setBounds(0, 0, bg.width, bg.height);
     this.cameras.main.setZoom(1.5);
 
-    this.plantableArea = new Phaser.Geom.Rectangle(120, 120, 560, 360);
+    this.plantableArea = new Phaser.Geom.Rectangle(250, 250, 250, 260);
+
+    this.player.setDepth(1);
   }
 
   update() {
@@ -89,10 +92,24 @@ export class Game extends Scene {
     return this.plantableArea.contains(this.player.x, this.player.y);
   }
 
+  private isSpotOccupied(x: number, y: number): boolean {
+    return this.plantedCrops.some(
+      (crop) => Phaser.Math.Distance.Between(crop.x, crop.y, x, y) < 20
+    );
+  }
+
   private tryPlant() {
-    if (this.isPlayerOverPlantableArea()) {
-      this.add.image(this.player.x, this.player.y, "nanem").setOrigin(0.5, 1);
+    if (
+      this.isPlayerOverPlantableArea() &&
+      !this.isSpotOccupied(this.player.x, this.player.y)
+    ) {
+      const crop = this.add
+        .image(this.player.x, this.player.y, "nanem")
+        .setOrigin(0.5, 1);
+      this.plantedCrops.push(crop);
       console.log("Planted!");
+    } else if (this.isSpotOccupied(this.player.x, this.player.y)) {
+      console.log("This spot is already occupied!");
     } else {
       console.log("Cannot plant here!");
     }
