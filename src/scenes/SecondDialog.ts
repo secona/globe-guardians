@@ -44,7 +44,18 @@ export class SecondDialog extends Phaser.Scene {
     ];
   }
 
+  preload() {
+    this.load.image("bg-sekolah", "assets/bg-sekolah.png");
+  }
+
   create() {
+    this.add
+      .image(0, 0, "bg-sekolah")
+      .setOrigin(0, 0)
+      .setDisplaySize(
+        this.sys.game.config.width as number,
+        this.sys.game.config.height as number
+      );
     this.scene.bringToTop(this);
     this.cameras.main.setBackgroundColor("rgba(0,0,0,0.5)");
     this.createDialogBox();
