@@ -46,7 +46,7 @@ export class City extends Scene {
 
   preload() {
     this.load.path = "assets/";
-    this.load.spritesheet("farmer", "farmer.png", {
+    this.load.spritesheet("farmer", "student.png", {
       frameWidth: 42,
       frameHeight: 48,
     });
