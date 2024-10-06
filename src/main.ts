@@ -5,6 +5,7 @@ import { MainMenu } from "./scenes/MainMenu";
 import { Dialog } from "./scenes/Dialog";
 import { City, CityHUD } from "./scenes/City";
 import { SecondDialog } from "./scenes/SecondDialog";
+import { EndingScene } from "./scenes/EndingScene";
 
 const config: Types.Core.GameConfig = {
   type: AUTO,
@@ -22,7 +23,16 @@ const config: Types.Core.GameConfig = {
     mode: Scale.FIT,
     autoCenter: Scale.CENTER_BOTH,
   },
-  scene: [MainMenu, Dialog, Farm, HUD, City, CityHUD, SecondDialog],
+  scene: [
+    MainMenu,
+    Dialog,
+    Farm,
+    HUD,
+    City,
+    CityHUD,
+    SecondDialog,
+    EndingScene,
+  ],
 };
 
 export default new Game(config);
