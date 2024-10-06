@@ -6,6 +6,7 @@ import { Dialog } from "./scenes/Dialog";
 import { City, CityHUD } from "./scenes/City";
 import { SecondDialog } from "./scenes/SecondDialog";
 import { EndingScene } from "./scenes/EndingScene";
+import { BeforeCityDialog } from "./scenes/BeforeCityDialog";
 
 const config: Types.Core.GameConfig = {
   type: AUTO,
@@ -28,6 +29,7 @@ const config: Types.Core.GameConfig = {
     Dialog,
     Farm,
     HUD,
+    BeforeCityDialog,
     City,
     CityHUD,
     SecondDialog,
