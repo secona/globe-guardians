@@ -13,6 +13,7 @@ export class Dialog extends Phaser.Scene {
   private nameText!: Phaser.GameObjects.Text;
   private dialogText!: Phaser.GameObjects.Text;
   private continueText!: Phaser.GameObjects.Text;
+  private ojan!: Phaser.GameObjects.Image;
 
   private currentDialogIndex: number = 0;
   private currentText: string = "";
@@ -41,7 +42,7 @@ export class Dialog extends Phaser.Scene {
     this.scene.bringToTop(this);
     this.cameras.main.setBackgroundColor("rgba(0,0,0,0.5)");
 
-    this.add.image(650, 300, "ojan");
+    this.ojan = this.add.image(650, 300, "ojan");
     this.createDialogBox();
 
     this.input.keyboard
@@ -97,9 +98,9 @@ export class Dialog extends Phaser.Scene {
   }
 
   private showNextDialog() {
-    console.log(this.currentDialogIndex)
     if (this.currentDialogIndex < this.dialogs.length) {
       const dialog = this.dialogs[this.currentDialogIndex++];
+      this.ojan.visible = dialog.name.toLowerCase() === 'ojan';
       this.nameText.setText(dialog.name);
       this.dialogText.setText("");
       this.currentText = dialog.text;
