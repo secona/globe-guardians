@@ -50,14 +50,14 @@ export class City extends Scene {
       frameWidth: 42,
       frameHeight: 48,
     });
-    this.load.image("bg", "kota.png");
+    this.load.image("bg-kota", "kota.png");
     this.load.image("truk", "truk.png");
   }
 
   create() {
     this.scene.launch("CityHUD", { onHelp: this.showNotification.bind(this) });
 
-    const bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
+    const bg = this.add.image(0, 0, "bg-kota").setOrigin(0, 0);
 
     this.trucks = [];
     this.physics.world.setBounds(0, 0, bg.width, bg.height);
