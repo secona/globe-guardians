@@ -5,6 +5,7 @@ import { ToolState } from "../states/ToolState";
 import { Notification } from "../objects/modal";
 import { StatsState } from "../states/StatsState";
 import { TutorialManager } from "../classes/tutorial";
+import { BeforeCityDialog } from "./BeforeCityDialog";
 
 export class Farm extends Scene {
   private player!: Player;
@@ -177,7 +178,7 @@ export class Farm extends Scene {
       ?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
       ?.on("down", () => {
         this.handleSpace();
-      })
+      });
 
     this.anims.create({
       key: "burn",
@@ -216,13 +217,21 @@ export class Farm extends Scene {
   }
 
   private handleSpace() {
-    console.log(this.toolState.getSelectedTool())
+    console.log(this.toolState.getSelectedTool());
 
     switch (this.toolState.getSelectedTool()) {
-      case 1: this.tryPlant(); break;
-      case 2: this.tryCutTree(); break;
-      case 3: this.trySetPeatOnFire(); break;
-      case 4: this.tryPlantSawit(); break;
+      case 1:
+        this.tryPlant();
+        break;
+      case 2:
+        this.tryCutTree();
+        break;
+      case 3:
+        this.trySetPeatOnFire();
+        break;
+      case 4:
+        this.tryPlantSawit();
+        break;
     }
   }
 
@@ -456,7 +465,7 @@ export class Farm extends Scene {
           character: "ojan",
         },
       ],
-      nextScene: 'City',
+      nextScene: "BeforeCityDialog",
     });
   }
 }
