@@ -1,6 +1,7 @@
 import { Input, Scene, Physics } from "phaser";
 import { Player } from "../sprites/player";
 import { Notification } from "../objects/modal";
+import { SecondDialog } from "./SecondDialog";
 
 export class CityHUD extends Scene {
   onHelp!: () => void;
@@ -26,7 +27,7 @@ export class CityHUD extends Scene {
       .image(aerosol.x + aerosol.width + 2, 10, "question-mark")
       .setOrigin(0, 0)
       .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => this.onHelp());
+      .on("pointerdown", () => this.onHelp());
   }
 }
 
@@ -54,7 +55,7 @@ export class City extends Scene {
   }
 
   create() {
-    this.scene.launch("CityHUD", { onHelp: this.showNotification.bind(this) })
+    this.scene.launch("CityHUD", { onHelp: this.showNotification.bind(this) });
 
     const bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
 
@@ -182,7 +183,10 @@ export class City extends Scene {
       this.trucks.push(truck);
     }
 
-    if (this.player.x == 6300) {
+    const worldEndX = this.cameras.main.worldView.right;
+    const playerRightEdge = this.player.x + this.player.width / 2;
+
+    if (playerRightEdge >= worldEndX - 5) {
       this.win();
     }
 
@@ -223,7 +227,7 @@ export class City extends Scene {
   }
 
   private win() {
-    console.log("You win!");
+    this.scene.start("SecondDialog");
   }
 
   private disableGameInput() {
@@ -251,7 +255,7 @@ export class City extends Scene {
       this,
       "If you're curious about\nhow to calculate this in\nreal life. Visit the site\n below!",
       "Aerosols Protocol",
-      "https://www.globe.gov/documents/348614/e9acbb7a-5e1f-444a-bdd3-acff62b50759",
+      "https://www.globe.gov/documents/348614/e9acbb7a-5e1f-444a-bdd3-acff62b50759"
     );
     this.notification.on("closed", this.onNotificationClosed, this);
     this.disableGameInput();
