@@ -18,7 +18,7 @@ export class SecondDialog extends Phaser.Scene {
     this.dialogs = [
       {
         name: "SURYA",
-        text: "Finally, I arrived at school! I hope I’m not late…",
+        text: "Finally, I arrived at school! I hope Im not late…",
         character: "surya",
       },
       {
@@ -38,7 +38,7 @@ export class SecondDialog extends Phaser.Scene {
       },
       {
         name: "SYSTEM",
-        text: "I’m feeling… quite lightheaded…",
+        text: "Im feeling… quite lightheaded…",
         character: "system",
       },
     ];
