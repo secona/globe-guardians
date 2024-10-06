@@ -23,6 +23,11 @@ export class MainMenu extends Scene {
     this.indicator1 = this.add.sprite(0, 0, "circle").setOrigin(0, 0).setScale(0.5);
     this.indicator2 = this.add.sprite(0, 0, "circle").setOrigin(0, 0).setScale(0.5);
 
+    const text = this.add.text(300, 550, "Press W and S to go up and down.\nPress Enter to select.", {
+      align: 'center'
+    });
+    text.setPosition(800 / 2 - text.width / 2, 600 - 50)
+
     this.input.keyboard
       ?.addKey(Input.Keyboard.KeyCodes.W)
       ?.on('down', () => this.mainMenuState.prev())
