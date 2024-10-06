@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { EndingScene } from "./EndingScene";
 
 export class SecondDialog extends Phaser.Scene {
   private static TYPING_INTERVAL = 30;
@@ -10,24 +11,34 @@ export class SecondDialog extends Phaser.Scene {
   private currentText: string = "";
   private textIndex: number = 0;
   private dialogs: { name: string; text: string; character: string }[];
-  private nextScene: string = "YourNextSceneKey";
+  private nextScene: string = "EndingScene";
 
   constructor() {
     super("SecondDialog");
     this.dialogs = [
       {
-        name: "SYSTEM",
-        text: "(School bell rings)",
-        character: "system",
-      },
-      {
         name: "SURYA",
-        text: "That was close, I've got to get better at waking up on time. Otherwise, teacher's going to be angrier than ever.",
+        text: "Finally, I arrived at school! I hope I’m not late…",
         character: "surya",
       },
       {
         name: "SYSTEM",
-        text: "Surya goes home and took a big rest, although being late the day seems to be just fine.",
+        text: "School activities from 07/10 until 12/10 has been cancelled due to poor air conditions. Please stay at home and stay safe.",
+        character: "system",
+      },
+      {
+        name: "SURYA",
+        text: "Aw, man. I wan all that way for nothing…",
+        character: "surya",
+      },
+      {
+        name: "SURYA",
+        text: "Now that I notice, though, it is kind of hard to breathe… better get back home quick…",
+        character: "surya",
+      },
+      {
+        name: "SYSTEM",
+        text: "I’m feeling… quite lightheaded…",
         character: "system",
       },
     ];
