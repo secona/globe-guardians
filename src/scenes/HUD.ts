@@ -7,13 +7,16 @@ export class HUD extends Scene {
     energyMask!: GameObjects.Sprite
     energyContainer!: GameObjects.Sprite
     energyContainerFilled!: GameObjects.Sprite
-    energyValue: number = 100
+
+    sleepButton!: GameObjects.Text
 
     moneyBar!: GameObjects.Sprite;
 
     elementState!: ElementState;
     toolState!: ToolState;
     statsState!: StatsState;
+
+    sleep!: () => void;
 
     constructor() {
         super('HUD');
@@ -36,13 +39,22 @@ export class HUD extends Scene {
         this.load.image("circle", "circle.png");
     }
 
-    init(data: { elementState: ElementState, toolState: ToolState, statsState: StatsState }) {
+    init(data: { elementState: ElementState, toolState: ToolState, statsState: StatsState, sleep: () => void }) {
         this.elementState = data.elementState;
         this.toolState = data.toolState;
         this.statsState = data.statsState;
+        this.sleep = data.sleep;
     }
 
     create() {
+        this.sleepButton = this.add
+            .text(300, 450, "Press here to sleep")
+            .setInteractive({ useHandCursor: true })
+            .setVisible(this.statsState.energy <= 10)
+            .on('pointerdown', () => {
+                this.sleep();
+            });
+
         this.moneyBar = this.add.sprite(0, 0, "money-bar").setOrigin(1, 0);
         this.moneyBar.setPosition(this.cameras.main.width - 10, 10);
 

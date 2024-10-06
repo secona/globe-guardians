@@ -1,4 +1,4 @@
-import { Input, Scene, Physics } from "phaser";
+import { Input, Scene, Physics, GameObjects } from "phaser";
 import { Player } from "../sprites/player";
 import { ElementState } from "../states/ElementState";
 import { ToolState } from "../states/ToolState";
@@ -9,9 +9,6 @@ import { TutorialManager } from "../classes/tutorial";
 export class Farm extends Scene {
   private player!: Player;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
-  private plantKey!: Phaser.Input.Keyboard.Key;
-  private sawitKey!: Phaser.Input.Keyboard.Key;
-  private fireKey!: Phaser.Input.Keyboard.Key;
   private colliders!: Physics.Arcade.StaticGroup;
   private peat: Phaser.GameObjects.Image[] = [];
   private plantableArea!: Phaser.Geom.Rectangle;
@@ -200,19 +197,7 @@ export class Farm extends Scene {
     }
 
     if (this.statsState.getEnergy() <= 1) {
-      this.scene.pause("Farm");
-
-      this.scene.launch("Dialog", {
-        dialogs: [
-          {
-            name: "OJAN",
-            text: "Alright-thats all for today, now have some rest on the condo i just built for you.",
-            character: "ojan",
-          },
-        ],
-        nextScene: 'City',
-      });
-
+      this.sleep();
       return;
     }
 
@@ -456,6 +441,22 @@ export class Farm extends Scene {
       elementState: this.elementState,
       toolState: this.toolState,
       statsState: this.statsState,
+      sleep: this.sleep.bind(this),
+    });
+  }
+
+  private sleep() {
+    this.scene.pause("Farm");
+
+    this.scene.launch("Dialog", {
+      dialogs: [
+        {
+          name: "OJAN",
+          text: "Alright-thats all for today, now have some rest on the condo i just built for you.",
+          character: "ojan",
+        },
+      ],
+      nextScene: 'City',
     });
   }
 }
