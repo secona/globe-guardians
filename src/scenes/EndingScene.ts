@@ -29,14 +29,13 @@ export class EndingScene extends Scene {
       this.video.setDisplaySize(videoWidth * scale, videoHeight * scale);
     };
 
-    this.video.on("loadeddata", fitVideo);
-
-    this.video.play(false);
-
-    this.video.on("complete", () => {
-      this.scene.start("MainMenu");
-    });
-
-    this.scale.on("resize", fitVideo);
+    this.video
+      .play(false)
+      .on("loadeddata", fitVideo)
+      .on("complete", () => {
+        this.scene.manager.getScenes().forEach((s) => this.scene.stop(s))
+        this.scene.start("MainMenu")
+      })
+      .on("resize", fitVideo);
   }
 }

@@ -35,6 +35,7 @@ export class BeforeCityDialog extends Phaser.Scene {
   }
 
   create() {
+    this.scene.remove('Farm');
     this.scene.bringToTop(this);
     this.cameras.main.setBackgroundColor("rgba(0,0,0,0.5)");
     this.createDialogBox();
