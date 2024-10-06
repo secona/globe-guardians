@@ -452,7 +452,7 @@ export class Farm extends Scene {
       dialogs: [
         {
           name: "OJAN",
-          text: "Alright-thats all for today, now have some rest on the condo i just built for you.",
+          text: "I think that's enough for today, time for a nap.",
           character: "ojan",
         },
       ],
