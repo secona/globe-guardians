@@ -64,38 +64,10 @@ export class City extends Scene {
 
     this.player = new Player({
       scene: this,
-      x: 300,
+      x: 0,
       y: 400,
       texture: "farmer",
     });
-
-    const truckGridSize = 50;
-    const truckAreaStartX = 600;
-    const truckAreaStartY = 100;
-    const truckAreaWidth = 250;
-    const truckAreaHeight = 200;
-
-    // for (
-    //   let x = truckAreaStartX;
-    //   x < truckAreaStartX + truckAreaWidth;
-    //   x += truckGridSize
-    // ) {
-    //   for (
-    //     let y = truckAreaStartY;
-    //     y < truckAreaStartY + truckAreaHeight;
-    //     y += truckGridSize
-    //   ) {
-    //     if (Math.random() > 0.7) {
-    //       const offsetX = Math.max(Math.random() * 800, 600);
-    //       const offsetY = Math.min(
-    //         Math.max(Math.random() * 400 + 100, 200),
-    //         600
-    //       );
-    //       const tree = this.add.image(offsetX, offsetY, "truk").setOrigin(0, 0);
-    //       this.trucks.push(tree);
-    //     }
-    //   }
-    // }
 
     this.cursors = this.input.keyboard?.addKeys({
       up: Input.Keyboard.KeyCodes.W,
@@ -189,11 +161,12 @@ export class City extends Scene {
 
     for (const truck of this.trucks) {
       if (
-        truck.x >= this.player.x &&
-        truck.x <= this.player.x + 20 &&
-        truck.y >= this.player.y &&
-        truck.y <= this.player.y + 64
+        truck.x >= this.player.x + -20 &&
+        truck.x <= this.player.x + 45 &&
+        truck.y >= this.player.y - 20 &&
+        truck.y <= this.player.y + 80
       ) {
+        console.log("hit");
         this.die();
       }
       truck.x -= 1.5;
@@ -223,7 +196,7 @@ export class City extends Scene {
       truck.destroy();
     }
     this.trucks = [];
-    this.player.x = 200;
+    this.player.x = 0;
     this.player.y = 400;
   }
 
