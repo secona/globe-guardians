@@ -435,7 +435,12 @@ export class Farm extends Scene {
 
   private showNotification() {
     this.isModalOpen = true;
-    this.notification = new Notification(this);
+    this.notification = new Notification(
+      this,
+      "If you want to know how to\nactually be guardians of\nthe globe in real life,\npress the button below!",
+      "Soil Fertility Protocol",
+      "https://www.globe.gov/documents/352961/9e59d0d4-4cf5-4e62-9802-081a61442ef4"
+    );
     this.notification.on("closed", this.onNotificationClosed, this);
     this.disableGameInput();
   }

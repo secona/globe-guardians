@@ -1,5 +1,6 @@
 import { Input, Scene, Physics } from "phaser";
 import { Player } from "../sprites/player";
+import { Notification } from "../objects/modal";
 
 export class CityHUD extends Scene {
   constructor() {
@@ -20,9 +21,10 @@ export class City extends Scene {
   private player!: Player;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private colliders!: Physics.Arcade.StaticGroup;
-  private isModalOpen: boolean = false;
 
   private trucks: Phaser.GameObjects.Image[] = [];
+  private notification: Notification | null = null;
+  private isModalOpen: boolean = false;
 
   constructor() {
     super("City");
@@ -112,6 +114,10 @@ export class City extends Scene {
       x: this.player.x,
       y: this.player.y,
     });
+
+    this.input.keyboard
+      ?.addKey(Input.Keyboard.KeyCodes.P)
+      ?.on('down', () => this.showNotification())
 
     vision.fillStyle(0x000000, 0.18);
     vision.beginPath();
@@ -210,4 +216,40 @@ export class City extends Scene {
   private win() {
     console.log("You win!");
   }
+
+  private disableGameInput() {
+    if (this.input.keyboard) {
+      this.input.keyboard.enabled = false;
+    }
+    if (this.input.mouse) {
+      this.input.mouse.enabled = true;
+    }
+  }
+
+  private enableGameInput() {
+    if (this.input.keyboard) {
+      this.input.keyboard.enabled = true;
+    }
+    if (this.input.mouse) {
+      this.input.mouse.enabled = true;
+    }
+  }
+
+  private showNotification() {
+    this.isModalOpen = true;
+    this.notification = new Notification(
+      this,
+      "If you're curious about\nhow to calculate this in\nreal life. Visit the site\n below!",
+      "Aerosols Protocol",
+      "https://www.globe.gov/documents/348614/e9acbb7a-5e1f-444a-bdd3-acff62b50759",
+    );
+    this.notification.on("closed", this.onNotificationClosed, this);
+    this.disableGameInput();
+  }
+
+  private onNotificationClosed = () => {
+    this.isModalOpen = false;
+    this.notification = null;
+    this.enableGameInput();
+  };
 }

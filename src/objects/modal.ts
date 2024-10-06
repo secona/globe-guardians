@@ -1,22 +1,20 @@
 import { Scene } from "phaser";
 
 export class Notification extends Phaser.GameObjects.Container {
-  private modalBackground: Phaser.GameObjects.Rectangle;
-  private contentBackground: Phaser.GameObjects.Rectangle;
-  private titleText: Phaser.GameObjects.Text;
-  private messageText: Phaser.GameObjects.Text;
-  private button: Phaser.GameObjects.Text;
-  private exitButton: Phaser.GameObjects.Text;
+  constructor(
+    scene: Scene,
+    private message: string,
+    private linkText: string,
+    private link: string,
+  ) {
+    super(scene, 600 / 2, 800 / 2);
 
-  constructor(scene: Scene) {
-    super(scene, scene.scale.width / 2, scene.scale.height / 2);
-
-    this.modalBackground = this.createModalBackground();
-    this.contentBackground = this.createContentBackground();
-    this.titleText = this.createTitle();
-    this.messageText = this.createMessage();
-    this.button = this.createButton();
-    this.exitButton = this.createExitButton();
+    this.createModalBackground();
+    this.createContentBackground();
+    this.createTitle();
+    this.createMessage();
+    this.createButton();
+    this.createExitButton();
 
     this.setDepth(1000);
     scene.add.existing(this);
@@ -27,9 +25,9 @@ export class Notification extends Phaser.GameObjects.Container {
     this.on(
       "pointerdown",
       (
-        pointer: Phaser.Input.Pointer,
-        localX: number,
-        localY: number,
+        _pointer: Phaser.Input.Pointer,
+        _localX: number,
+        _localY: number,
         event: Phaser.Types.Input.EventData
       ) => {
         event.stopPropagation();
@@ -70,36 +68,31 @@ export class Notification extends Phaser.GameObjects.Container {
   }
 
   private createMessage(): Phaser.GameObjects.Text {
-    const message = this.scene.add.text(
-      0,
-      -10,
-      "If you want to know how to\nactually be guardians of\nthe globe in real life,\npress the button below!",
-      {
+    const message = this.scene.add
+      .text(0, -10, this.message, {
         fontSize: "16px",
         color: "#B83C3C",
         align: "center",
-      }
-    );
-    message.setOrigin(0.5);
+      })
+      .setOrigin(0.5);
+
     this.add(message);
     return message;
   }
 
   private createButton(): Phaser.GameObjects.Text {
-    const button = this.scene.add.text(0, 50, "Soil Fertility Protocol", {
-      fontSize: "16px",
-      color: "#FFF3C6",
-      backgroundColor: "#B83C3C",
-      padding: { x: 10, y: 5 },
-    });
-    button.setOrigin(0.5).setInteractive();
-
-    button.on("pointerdown", () => {
-      window.open(
-        "https://www.globe.gov/documents/352961/9e59d0d4-4cf5-4e62-9802-081a61442ef4",
-        "_blank"
-      );
-    });
+    const button = this.scene.add
+      .text(0, 50, this.linkText, {
+        fontSize: "16px",
+        color: "#FFF3C6",
+        backgroundColor: "#B83C3C",
+        padding: { x: 10, y: 5 },
+      })
+      .setOrigin(0.5)
+      .setInteractive()
+      .on("pointerdown", () => {
+        window.open(this.link, "_blank");
+      });
 
     this.add(button);
     return button;
