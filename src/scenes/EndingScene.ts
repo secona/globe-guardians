@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { MainMenu } from "./MainMenu";
 
 export class EndingScene extends Scene {
   private video!: Phaser.GameObjects.Video;
@@ -33,7 +34,7 @@ export class EndingScene extends Scene {
     this.video.play(false);
 
     this.video.on("complete", () => {
-      this.scene.start("NextScene");
+      this.scene.start("MainMenu");
     });
 
     this.scale.on("resize", fitVideo);
