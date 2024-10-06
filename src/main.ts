@@ -21,7 +21,7 @@ const config: Types.Core.GameConfig = {
     mode: Scale.FIT,
     autoCenter: Scale.CENTER_BOTH,
   },
-  scene: [City, CityHUD, MainMenu, Dialog, Farm, HUD, ],
+  scene: [MainMenu, Dialog, Farm, HUD, City, CityHUD, ],
 };
 
 export default new Game(config);

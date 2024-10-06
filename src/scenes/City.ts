@@ -3,17 +3,30 @@ import { Player } from "../sprites/player";
 import { Notification } from "../objects/modal";
 
 export class CityHUD extends Scene {
+  onHelp!: () => void;
+
   constructor() {
     super("CityHUD");
+  }
+
+  init(data: { onHelp: () => void }) {
+    this.onHelp = data.onHelp;
   }
 
   preload() {
     this.load.setPath("assets");
     this.load.image("aerosol", "aerosol.png");
+    this.load.image("question-mark", "question-mark.png");
   }
 
   create() {
-    this.add.image(300, 10, "aerosol").setOrigin(0, 0);
+    const aerosol = this.add.image(275, 10, "aerosol").setOrigin(0, 0);
+
+    this.add
+      .image(aerosol.x + aerosol.width + 2, 10, "question-mark")
+      .setOrigin(0, 0)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', () => this.onHelp());
   }
 }
 
@@ -41,7 +54,7 @@ export class City extends Scene {
   }
 
   create() {
-    this.scene.launch("CityHUD")
+    this.scene.launch("CityHUD", { onHelp: this.showNotification.bind(this) })
 
     const bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
 
@@ -114,10 +127,6 @@ export class City extends Scene {
       x: this.player.x,
       y: this.player.y,
     });
-
-    this.input.keyboard
-      ?.addKey(Input.Keyboard.KeyCodes.P)
-      ?.on('down', () => this.showNotification())
 
     vision.fillStyle(0x000000, 0.18);
     vision.beginPath();
@@ -236,6 +245,7 @@ export class City extends Scene {
   }
 
   private showNotification() {
+    console.log(this);
     this.isModalOpen = true;
     this.notification = new Notification(
       this,
