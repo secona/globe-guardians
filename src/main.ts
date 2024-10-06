@@ -25,12 +25,12 @@ const config: Types.Core.GameConfig = {
     autoCenter: Scale.CENTER_BOTH,
   },
   scene: [
+    City,
     MainMenu,
     Dialog,
     Farm,
     HUD,
     BeforeCityDialog,
-    City,
     CityHUD,
     SecondDialog,
     EndingScene,

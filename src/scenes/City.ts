@@ -75,27 +75,27 @@ export class City extends Scene {
     const truckAreaWidth = 250;
     const truckAreaHeight = 200;
 
-    for (
-      let x = truckAreaStartX;
-      x < truckAreaStartX + truckAreaWidth;
-      x += truckGridSize
-    ) {
-      for (
-        let y = truckAreaStartY;
-        y < truckAreaStartY + truckAreaHeight;
-        y += truckGridSize
-      ) {
-        if (Math.random() > 0.7) {
-          const offsetX = Math.max(Math.random() * 800, 600);
-          const offsetY = Math.min(
-            Math.max(Math.random() * 400 + 100, 200),
-            600
-          );
-          const tree = this.add.image(offsetX, offsetY, "truk").setOrigin(0, 0);
-          this.trucks.push(tree);
-        }
-      }
-    }
+    // for (
+    //   let x = truckAreaStartX;
+    //   x < truckAreaStartX + truckAreaWidth;
+    //   x += truckGridSize
+    // ) {
+    //   for (
+    //     let y = truckAreaStartY;
+    //     y < truckAreaStartY + truckAreaHeight;
+    //     y += truckGridSize
+    //   ) {
+    //     if (Math.random() > 0.7) {
+    //       const offsetX = Math.max(Math.random() * 800, 600);
+    //       const offsetY = Math.min(
+    //         Math.max(Math.random() * 400 + 100, 200),
+    //         600
+    //       );
+    //       const tree = this.add.image(offsetX, offsetY, "truk").setOrigin(0, 0);
+    //       this.trucks.push(tree);
+    //     }
+    //   }
+    // }
 
     this.cursors = this.input.keyboard?.addKeys({
       up: Input.Keyboard.KeyCodes.W,
@@ -172,10 +172,7 @@ export class City extends Scene {
       const truck = this.add
         .image(
           this.player.x + 250,
-          Math.min(
-            Math.max(this.player.y + Math.random() * 200 - 100, 100),
-            300
-          ),
+          Math.min(Math.max(this.player.y + Math.random() * 800, 150), 350),
           "truk"
         )
         .setOrigin(0, 0);
@@ -193,18 +190,22 @@ export class City extends Scene {
     for (const truck of this.trucks) {
       if (
         truck.x >= this.player.x &&
-        truck.x <= this.player.x + 42 &&
+        truck.x <= this.player.x + 20 &&
         truck.y >= this.player.y &&
-        truck.y + 64 >= this.player.y
+        truck.y <= this.player.y + 64
       ) {
         this.die();
       }
       truck.x -= 1.5;
-      if (truck.x - this.player.x > 500 && sample < 0.5) {
+      if (truck.x - this.player.x < -400 && sample < 0.5) {
         truck.x = this.player.x + 500;
         truck.y = Math.min(
-          this.player.y + Math.max(Math.random() * 200 - 100, 100),
-          300
+          Math.max(
+            this.player.y +
+              (Math.random() > 0.5 ? -1 : 1) * Math.random() * 800,
+            150
+          ),
+          350
         );
       }
     }
