@@ -33,8 +33,7 @@ export class EndingScene extends Scene {
       .play(false)
       .on("loadeddata", fitVideo)
       .on("complete", () => {
-        this.scene.manager.getScenes().forEach((s) => this.scene.stop(s))
-        this.scene.start("MainMenu")
+        window.location.reload();
       })
       .on("resize", fitVideo);
   }
