@@ -5,9 +5,8 @@ import { ToolState } from "../states/ToolState";
 import { Notification } from "../objects/modal";
 import { StatsState } from "../states/StatsState";
 import { TutorialManager } from "../classes/tutorial";
-import { ChangeScene } from "./changescene";
 
-export class Game extends Scene {
+export class Farm extends Scene {
   private player!: Player;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private plantKey!: Phaser.Input.Keyboard.Key;
@@ -27,19 +26,14 @@ export class Game extends Scene {
     fire: Phaser.GameObjects.Sprite;
   }[] = [];
 
-  private hudScene: Phaser.Scenes.ScenePlugin = null!;
   private tutorialManager!: TutorialManager;
 
   private elementState: ElementState;
   private toolState: ToolState;
   private statsState: StatsState;
-  private dialogBox!: Phaser.GameObjects.Rectangle;
-  private nameText!: Phaser.GameObjects.Text;
-  private dialogText!: Phaser.GameObjects.Text;
-  private continueText!: Phaser.GameObjects.Text;
 
   constructor() {
-    super("Game");
+    super("Farm");
     this.elementState = new ElementState();
     this.toolState = new ToolState();
     this.statsState = new StatsState();
@@ -162,19 +156,38 @@ export class Game extends Scene {
 
     this.input.keyboard
       ?.addKey(Phaser.Input.Keyboard.KeyCodes.ONE)
-      ?.on("down", () => this.toolState.setSelectedTool(1));
+      ?.on("down", () => {
+        this.toolState.setSelectedTool(1);
+        this.hud();
+      });
+
     this.input.keyboard
       ?.addKey(Phaser.Input.Keyboard.KeyCodes.TWO)
-      ?.on("down", () => this.toolState.setSelectedTool(2));
+      ?.on("down", () => {
+        this.toolState.setSelectedTool(2);
+        this.hud();
+      });
+
     this.input.keyboard
       ?.addKey(Phaser.Input.Keyboard.KeyCodes.THREE)
-      ?.on("down", () => this.toolState.setSelectedTool(3));
+      ?.on("down", () => {
+        this.toolState.setSelectedTool(3);
+        this.hud();
+      });
+
     this.input.keyboard
       ?.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR)
-      ?.on("down", () => this.toolState.setSelectedTool(4));
+      ?.on("down", () => {
+        this.toolState.setSelectedTool(4);
+        this.hud();
+      });
+
     this.input.keyboard
       ?.addKey(Phaser.Input.Keyboard.KeyCodes.FIVE)
-      ?.on("down", () => this.toolState.setSelectedTool(5));
+      ?.on("down", () => {
+        this.toolState.setSelectedTool(5);
+        this.hud();
+      });
 
     this.anims.create({
       key: "burn",
@@ -194,7 +207,19 @@ export class Game extends Scene {
     }
 
     if (this.statsState.getEnergy() <= 1) {
-      this.scene.start("ChangeScene");
+      this.scene.pause("Farm");
+
+      this.scene.launch("Dialog", {
+        dialogs: [
+          {
+            name: "OJAN",
+            text: "Alright-thats all for today, now have some rest on the condo i just built for you.",
+            character: "ojan",
+          },
+        ],
+        nextScene: 'City',
+      });
+
       return;
     }
 
@@ -440,7 +465,7 @@ export class Game extends Scene {
   }
 
   private hud() {
-    this.hudScene = this.scene.launch("HUD", {
+    this.scene.launch("HUD", {
       elementState: this.elementState,
       toolState: this.toolState,
       statsState: this.statsState,

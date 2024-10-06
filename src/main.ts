@@ -1,10 +1,9 @@
-import { Game as MainGame } from "./scenes/Game";
+import { Farm } from "./scenes/Farm";
 import { AUTO, Game, Scale, Types } from "phaser";
 import { HUD } from "./scenes/HUD";
 import { MainMenu } from "./scenes/MainMenu";
-import { DialogScene } from "./scenes/dialog";
-import { ChangeScene } from "./scenes/changescene";
-import { Secondscene } from "./scenes/Secondscene";
+import { Dialog } from "./scenes/Dialog";
+import { City } from "./scenes/City";
 
 const config: Types.Core.GameConfig = {
   type: AUTO,
@@ -22,7 +21,7 @@ const config: Types.Core.GameConfig = {
     mode: Scale.FIT,
     autoCenter: Scale.CENTER_BOTH,
   },
-  scene: [MainMenu, DialogScene, MainGame, HUD, ChangeScene, Secondscene],
+  scene: [MainMenu, Dialog, Farm, City, HUD],
 };
 
 export default new Game(config);

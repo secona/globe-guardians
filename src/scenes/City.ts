@@ -4,7 +4,7 @@ import { ElementState } from "../states/ElementState";
 import { ToolState } from "../states/ToolState";
 import { StatsState } from "../states/StatsState";
 
-export class Game extends Scene {
+export class City extends Scene {
   private player!: Player;
   private cursors!: Phaser.Types.Input.Keyboard.CursorKeys;
   private colliders!: Physics.Arcade.StaticGroup;
@@ -17,7 +17,7 @@ export class Game extends Scene {
   private aerosol!: Phaser.GameObjects.Image;
 
   constructor() {
-    super("Game");
+    super("City");
     this.elementState = new ElementState();
     this.toolState = new ToolState();
     this.statsState = new StatsState();

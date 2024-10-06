@@ -1,12 +1,12 @@
 import Phaser from "phaser";
 
-export interface Dialog {
+export interface IDialog {
   name: string;
   text: string;
   character: string;
 }
 
-export class DialogScene extends Phaser.Scene {
+export class Dialog extends Phaser.Scene {
   private static TYPING_INTERVAL = 30;
 
   private dialogBox!: Phaser.GameObjects.Rectangle;
@@ -14,17 +14,23 @@ export class DialogScene extends Phaser.Scene {
   private dialogText!: Phaser.GameObjects.Text;
   private continueText!: Phaser.GameObjects.Text;
 
-  private dialogs!: Dialog[];
   private currentDialogIndex: number = 0;
   private currentText: string = "";
   private textIndex: number = 0;
 
+  private dialogs!: IDialog[];
+  private nextScene!: string;
+
   constructor() {
-    super("DialogScene");
+    super("Dialog");
   }
 
-  init(data: { dialogs: Dialog[] }) {
+  init(data: { dialogs: IDialog[], nextScene: string }) {
     this.dialogs = data.dialogs;
+    this.nextScene = data.nextScene;
+    this.currentDialogIndex = 0;
+    this.currentText = "";
+    this.textIndex = 0;
   }
 
   preload() {
@@ -32,6 +38,9 @@ export class DialogScene extends Phaser.Scene {
   }
 
   create() {
+    this.scene.bringToTop(this);
+    this.cameras.main.setBackgroundColor("rgba(0,0,0,0.5)");
+
     this.add.image(650, 300, "ojan");
     this.createDialogBox();
 
@@ -40,7 +49,7 @@ export class DialogScene extends Phaser.Scene {
       ?.on("down", this.showNextDialog, this);
 
     this.time.addEvent({
-      delay: DialogScene.TYPING_INTERVAL,
+      delay: Dialog.TYPING_INTERVAL,
       callback: this.typeText,
       callbackScope: this,
       loop: true,
@@ -58,11 +67,13 @@ export class DialogScene extends Phaser.Scene {
       fontSize: "24px",
       color: "#000",
     });
+
     this.dialogText = this.add.text(20, 460, "", {
       fontSize: "20px",
       color: "#000",
       wordWrap: { width: 760 },
     });
+
     this.continueText = this.add.text(720, 640, "[Continue]", {
       fontSize: "18px",
       color: "#666",
@@ -86,6 +97,7 @@ export class DialogScene extends Phaser.Scene {
   }
 
   private showNextDialog() {
+    console.log(this.currentDialogIndex)
     if (this.currentDialogIndex < this.dialogs.length) {
       const dialog = this.dialogs[this.currentDialogIndex++];
       this.nameText.setText(dialog.name);
@@ -94,7 +106,11 @@ export class DialogScene extends Phaser.Scene {
       this.textIndex = 0;
       this.showDialog();
     } else {
-      this.startMainMenu();
+      this.cameras.main.fade(1000, 0, 0, 0);
+      this.cameras.main.once("camerafadeoutcomplete", () => {
+        this.scene.manager.getScenes().forEach((s) => this.scene.stop(s))
+        this.scene.start(this.nextScene);
+      })
     }
   }
 
@@ -103,9 +119,5 @@ export class DialogScene extends Phaser.Scene {
       this.dialogText.appendText(this.currentText[this.textIndex], false);
       this.textIndex++;
     }
-  }
-
-  private startMainMenu() {
-    this.scene.start("Game");
   }
 }

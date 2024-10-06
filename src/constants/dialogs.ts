@@ -1,6 +1,6 @@
-import { Dialog } from "../scenes/dialog";
+import { IDialog } from "../scenes/Dialog";
 
-export const first: Dialog[] = [
+export const first: IDialog[] = [
   {
     name: "JOKO",
     text: "Well, Ojan, here we are. This land has been in my family for generations. Here's the farmland I promised you.",

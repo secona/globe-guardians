@@ -43,8 +43,11 @@ export class MainMenu extends Scene {
 
   handleSpace() {
     if (this.mainMenuState.selected == 0) {
-      this.scene.start('DialogScene', {
+      this.scene.stop('MainMenu');
+
+      this.scene.launch('Dialog', {
         dialogs: first,
+        nextScene: 'Farm',
       })
     }
   }
