@@ -137,12 +137,6 @@ export class Farm extends Scene {
       right: Input.Keyboard.KeyCodes.D,
     }) as Phaser.Types.Input.Keyboard.CursorKeys;
 
-    this.plantKey = this.input.keyboard?.addKey(Input.Keyboard.KeyCodes.ONE!)!;
-    this.sawitKey = this.input.keyboard?.addKey(Input.Keyboard.KeyCodes.FIVE!)!;
-    this.fireKey = this.input.keyboard?.addKey(
-      Phaser.Input.Keyboard.KeyCodes.FOUR!
-    )!;
-
     this.createColliders();
     this.physics.add.collider(this.player, this.colliders);
 
@@ -183,11 +177,10 @@ export class Farm extends Scene {
       });
 
     this.input.keyboard
-      ?.addKey(Phaser.Input.Keyboard.KeyCodes.FIVE)
+      ?.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE)
       ?.on("down", () => {
-        this.toolState.setSelectedTool(5);
-        this.hud();
-      });
+        this.handleSpace();
+      })
 
     this.anims.create({
       key: "burn",
@@ -234,22 +227,17 @@ export class Farm extends Scene {
       } else {
         this.player.stopMoving();
       }
+    }
+  }
 
-      if (Phaser.Input.Keyboard.JustDown(this.plantKey)) {
-        this.hud();
-        console.log(this.toolState.getSelectedTool());
-        this.tryPlant();
-      }
+  private handleSpace() {
+    console.log(this.toolState.getSelectedTool())
 
-      if (this.toolState.getSelectedTool() === 3) {
-        this.tryCutTree();
-      }
-      if (this.toolState.getSelectedTool() === 5) {
-        this.handlePlanting();
-      }
-      if (this.toolState.getSelectedTool() === 4) {
-        this.trySetPeatOnFire();
-      }
+    switch (this.toolState.getSelectedTool()) {
+      case 1: this.tryPlant(); break;
+      case 2: this.tryCutTree(); break;
+      case 3: this.trySetPeatOnFire(); break;
+      case 4: this.tryPlantSawit(); break;
     }
   }
 
@@ -341,12 +329,6 @@ export class Farm extends Scene {
       this.peat = this.peat.filter((p) => p !== nearestPeat);
     } else {
       console.log("No peat nearby to set on fire!");
-    }
-  }
-
-  private handlePlanting() {
-    if (Phaser.Input.Keyboard.JustDown(this.sawitKey)) {
-      this.tryPlantSawit();
     }
   }
 

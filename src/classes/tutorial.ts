@@ -132,10 +132,9 @@ export class TutorialManager {
 const tutorialSteps = [
   { text: "Welcome to the Globe Guardians!\nPress 'Next' to continue." },
   { text: "Press '1' to select the shovel tool\n to know our soil fertility" },
-  { text: "Press '2' to select nanti" },
-  { text: "Press '3' to select axe\n to cut trees" },
-  { text: "Press '4' to select lighter\n to burn peat" },
-  { text: "Press '5' to select seed\n to plant crops" },
+  { text: "Press '2' to select axe\n to cut trees" },
+  { text: "Press '3' to select lighter\n to burn peat" },
+  { text: "Press '4' to select seed\n to plant crops" },
   { text: "Move to the soil area\n to plant crops" },
   {
     text: "Great job!\n You're ready to start playing.\nPress 'Finish' to begin.",

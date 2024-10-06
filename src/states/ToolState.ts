@@ -8,6 +8,6 @@ export class ToolState {
   }
 
   setSelectedTool(value: number) {
-    this.selectedTool = Math.min(Math.max(value, 1), 5)
+    this.selectedTool = Math.min(Math.max(value, 1), 4)
   }
 }
