@@ -1,8 +1,20 @@
 import { Input, Scene, Physics } from "phaser";
 import { Player } from "../sprites/player";
-import { ElementState } from "../states/ElementState";
-import { ToolState } from "../states/ToolState";
-import { StatsState } from "../states/StatsState";
+
+export class CityHUD extends Scene {
+  constructor() {
+    super("CityHUD");
+  }
+
+  preload() {
+    this.load.setPath("assets");
+    this.load.image("aerosol", "aerosol.png");
+  }
+
+  create() {
+    this.add.image(300, 10, "aerosol").setOrigin(0, 0);
+  }
+}
 
 export class City extends Scene {
   private player!: Player;
@@ -10,17 +22,10 @@ export class City extends Scene {
   private colliders!: Physics.Arcade.StaticGroup;
   private isModalOpen: boolean = false;
 
-  private elementState: ElementState;
-  private toolState: ToolState;
-  private statsState: StatsState;
   private trucks: Phaser.GameObjects.Image[] = [];
-  private aerosol!: Phaser.GameObjects.Image;
 
   constructor() {
     super("City");
-    this.elementState = new ElementState();
-    this.toolState = new ToolState();
-    this.statsState = new StatsState();
   }
 
   preload() {
@@ -31,17 +36,15 @@ export class City extends Scene {
     });
     this.load.image("bg", "kota.png");
     this.load.image("truk", "truk.png");
-    this.load.image("aerosol", "aerosol.png");
   }
 
   create() {
-    this.trucks = [];
+    this.scene.launch("CityHUD")
+
     const bg = this.add.image(0, 0, "bg").setOrigin(0, 0);
+
+    this.trucks = [];
     this.physics.world.setBounds(0, 0, bg.width, bg.height);
-    this.aerosol = this.add
-      .image(20, 0, "aerosol")
-      .setOrigin(0, 0)
-      .setDepth(10);
 
     this.player = new Player({
       scene: this,
@@ -93,23 +96,6 @@ export class City extends Scene {
     this.cameras.main.setZoom(1.5);
 
     this.player.setDepth(1);
-
-    this.input.keyboard
-      ?.addKey(Phaser.Input.Keyboard.KeyCodes.ONE)
-      ?.on("down", () => this.toolState.setSelectedTool(1));
-    this.input.keyboard
-      ?.addKey(Phaser.Input.Keyboard.KeyCodes.TWO)
-      ?.on("down", () => this.toolState.setSelectedTool(2));
-    this.input.keyboard
-      ?.addKey(Phaser.Input.Keyboard.KeyCodes.THREE)
-      ?.on("down", () => this.toolState.setSelectedTool(3));
-    this.input.keyboard
-      ?.addKey(Phaser.Input.Keyboard.KeyCodes.FOUR)
-      ?.on("down", () => this.toolState.setSelectedTool(4));
-    this.input.keyboard
-      ?.addKey(Phaser.Input.Keyboard.KeyCodes.FIVE)
-      ?.on("down", () => this.toolState.setSelectedTool(5));
-
     const overlay = this.add
       .rectangle(
         0,
@@ -151,8 +137,6 @@ export class City extends Scene {
     if (this.player.y < 150) {
       this.player.y = 150;
     }
-    this.aerosol.x = this.player.x - 97;
-    this.aerosol.y = this.player.y - 200;
 
     if (this.player && this.cursors && !this.isModalOpen) {
       const direction = new Phaser.Math.Vector2(0, 0);

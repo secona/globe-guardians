@@ -3,7 +3,7 @@ import { AUTO, Game, Scale, Types } from "phaser";
 import { HUD } from "./scenes/HUD";
 import { MainMenu } from "./scenes/MainMenu";
 import { Dialog } from "./scenes/Dialog";
-import { City } from "./scenes/City";
+import { City, CityHUD } from "./scenes/City";
 
 const config: Types.Core.GameConfig = {
   type: AUTO,
@@ -21,7 +21,7 @@ const config: Types.Core.GameConfig = {
     mode: Scale.FIT,
     autoCenter: Scale.CENTER_BOTH,
   },
-  scene: [MainMenu, Dialog, Farm, City, HUD],
+  scene: [City, CityHUD, MainMenu, Dialog, Farm, HUD],
 };
 
 export default new Game(config);
